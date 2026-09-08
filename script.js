@@ -1,4 +1,5 @@
 import { drawUI } from "./render/ui.js";
+import {drawBackground} from "./render/stage.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -24,7 +25,7 @@ let testTimer = 99;
 
 function gameLoop() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
+    drawBackground(ctx, canvas);
     drawUI(
         ctx,
         canvas,
