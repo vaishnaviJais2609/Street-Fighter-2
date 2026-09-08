@@ -16,14 +16,47 @@ class Fighter {
         this.velocityY = 0;
         this.velocityX = 0;
         this.speed = 5;
+        this.state = 'idle';
+        this.isAttacking = false;
+        this.attackBox = {
+            x: this.x,
+            y: this.y,
+            width: 100,
+            height: 50
+        };
     }
 
     draw() {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+        if (this.isAttacking) {
+            ctx.fillStyle = 'green';
+            ctx.fillRect(this.attackBox.x, this.attackBox.y, this.attackBox.width, this.attackBox.height);
+        }
+    }
+
+    attack() {
+        this.isAttacking = true;
+        setTimeout(() => {
+            this.isAttacking = false;
+        }, 100);
     }
 
     update() {
+        this.attackBox.x = this.x;
+        this.attackBox.y = this.y + 20;
+
+        if (this.velocityY < 0) {
+            this.state = 'jump';
+        } else if (this.velocityY > 0) {
+            this.state = 'fall';
+        } else if (this.velocityX !== 0) {
+            this.state = 'walk';
+        } else {
+            this.state = 'idle';
+        }
+
         this.draw();
         
         this.x += this.velocityX;
@@ -44,12 +77,16 @@ const player2 = new Fighter(canvas.width - 250, 0, 'blue');
 const keys = {
     a: { pressed: false },
     d: { pressed: false },
-    w: { pressed: false }
+    w: { pressed: false },
+    ' ': { pressed: false }
 };
 
 window.addEventListener('keydown', (event) => {
     if (keys[event.key]) {
         keys[event.key].pressed = true;
+    }
+    if (event.key === ' ') {
+        player1.attack();
     }
 });
 
@@ -58,6 +95,15 @@ window.addEventListener('keyup', (event) => {
         keys[event.key].pressed = false;
     }
 });
+
+function detectCollision(rect1, rect2) {
+    return (
+        rect1.attackBox.x < rect2.x + rect2.width &&
+        rect1.attackBox.x + rect1.attackBox.width > rect2.x &&
+        rect1.attackBox.y < rect2.y + rect2.height &&
+        rect1.attackBox.y + rect1.attackBox.height > rect2.y
+    );
+}
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -83,6 +129,14 @@ function gameLoop() {
 
     player1.update();
     player2.update();
+
+    if (player1.isAttacking && detectCollision(player1, player2)) {
+        player1.isAttacking = false;
+        player2.color = 'white';
+        setTimeout(() => {
+            player2.color = 'blue';
+        }, 100);
+    }
 
     requestAnimationFrame(gameLoop);
 }
