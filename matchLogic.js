@@ -22,8 +22,33 @@ function checkHits(p1, p2) {
     }
 }
 
+let timer = 60;
+let timerId;
+
+function decreaseTimer(p1, p2) {
+    if (timer > 0) {
+        timerId = setTimeout(() => decreaseTimer(p1, p2), 1000);
+        timer--;
+        document.getElementById('timer').innerText = timer;
+    }
+
+    if (timer === 0) {
+        let resultDiv = document.getElementById('result-text');
+        resultDiv.style.display = 'flex';
+        
+        if (p1.health === p2.health) {
+            resultDiv.innerText = 'Tie';
+        } else if (p1.health > p2.health) {
+            resultDiv.innerText = 'Player 1 Wins';
+        } else {
+            resultDiv.innerText = 'Player 2 Wins';
+        }
+    }
+}
+
 function determineWinner(p1, p2) {
     if (p1.health === 0 || p2.health === 0) {
+        clearTimeout(timerId);
         let resultDiv = document.getElementById('result-text');
         resultDiv.style.display = 'flex';
         

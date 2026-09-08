@@ -100,4 +100,8 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+if (typeof decreaseTimer === 'function') {
+    decreaseTimer(player1, player2);
+}
+
 gameLoop();
