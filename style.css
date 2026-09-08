@@ -60,3 +60,19 @@ canvas {
     background-color: #3b82f6;
     transition: width 0.2s ease-in-out;
 }
+
+#result-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 60px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    text-shadow: 2px 2px 4px black;
+}

@@ -93,6 +93,10 @@ function gameLoop() {
         checkHits(player1, player2);
     }
 
+    if (typeof determineWinner === 'function') {
+        determineWinner(player1, player2);
+    }
+
     requestAnimationFrame(gameLoop);
 }
 
