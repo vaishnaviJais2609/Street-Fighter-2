@@ -17,6 +17,7 @@ class Fighter {
         this.velocityX = 0;
         this.speed = 5;
         this.state = 'idle';
+        this.health = 100;
         this.isAttacking = false;
         this.attackBox = {
             x: this.x,
