@@ -47,14 +47,8 @@ class Fighter {
         this.attackBox.x = this.x;
         this.attackBox.y = this.y + 20;
 
-        if (this.velocityY < 0) {
-            this.state = 'jump';
-        } else if (this.velocityY > 0) {
-            this.state = 'fall';
-        } else if (this.velocityX !== 0) {
-            this.state = 'walk';
-        } else {
-            this.state = 'idle';
+        if (typeof updateState === 'function') {
+            updateState(this);
         }
 
         this.draw();
@@ -74,68 +68,28 @@ class Fighter {
 const player1 = new Fighter(200, 0, 'red');
 const player2 = new Fighter(canvas.width - 250, 0, 'blue');
 
-const keys = {
-    a: { pressed: false },
-    d: { pressed: false },
-    w: { pressed: false },
-    ' ': { pressed: false }
-};
-
-window.addEventListener('keydown', (event) => {
-    if (keys[event.key]) {
-        keys[event.key].pressed = true;
-    }
-    if (event.key === ' ') {
-        player1.attack();
-    }
-});
-
-window.addEventListener('keyup', (event) => {
-    if (keys[event.key]) {
-        keys[event.key].pressed = false;
-    }
-});
-
-function detectCollision(rect1, rect2) {
-    return (
-        rect1.attackBox.x < rect2.x + rect2.width &&
-        rect1.attackBox.x + rect1.attackBox.width > rect2.x &&
-        rect1.attackBox.y < rect2.y + rect2.height &&
-        rect1.attackBox.y + rect1.attackBox.height > rect2.y
-    );
-}
-
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     player1.velocityX = 0;
-    if (keys.a.pressed) player1.velocityX = -player1.speed;
-    else if (keys.d.pressed) player1.velocityX = player1.speed;
+    if (typeof keys !== 'undefined') {
+        if (keys.a.pressed) player1.velocityX = -player1.speed;
+        else if (keys.d.pressed) player1.velocityX = player1.speed;
 
-    if (keys.w.pressed && player1.y + player1.height >= canvas.height) {
-        player1.velocityY = -15;
+        if (keys.w.pressed && player1.y + player1.height >= canvas.height) {
+            player1.velocityY = -15;
+        }
     }
 
-    player2.velocityX = 0;
-    
-    let distance = player1.x - player2.x;
-    if (Math.abs(distance) > 50) {
-        if (distance > 0) {
-            player2.velocityX = player2.speed - 1;
-        } else {
-            player2.velocityX = -(player2.speed - 1);
-        }
+    if (typeof updateAI === 'function') {
+        updateAI(player1, player2);
     }
 
     player1.update();
     player2.update();
 
-    if (player1.isAttacking && detectCollision(player1, player2)) {
-        player1.isAttacking = false;
-        player2.color = 'white';
-        setTimeout(() => {
-            player2.color = 'blue';
-        }, 100);
+    if (typeof checkHits === 'function') {
+        checkHits(player1, player2);
     }
 
     requestAnimationFrame(gameLoop);
