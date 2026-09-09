@@ -10,7 +10,6 @@ function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
-
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
@@ -90,7 +89,7 @@ function drawResults() {
     ctx.restore();
 }
 
-window.addEventListener("keydown", function(event) {
+window.addEventListener("keydown", function (event) {
     const scene = getCurrentScene();
 
     if (scene === "menu") {
@@ -152,7 +151,7 @@ function getCanvasMousePos(e) {
     };
 }
 
-canvas.addEventListener("mousemove", function(e) {
+canvas.addEventListener("mousemove", function (e) {
     const scene = getCurrentScene();
     const pos = getCanvasMousePos(e);
 
@@ -230,14 +229,14 @@ canvas.addEventListener("mousemove", function(e) {
     }
 });
 
-canvas.addEventListener("mouseleave", function() {
+canvas.addEventListener("mouseleave", function () {
     hoveredMenuIndex = -1;
     hoveredStageIndex = -1;
     hoveredCharIndex = -1;
     canvas.style.cursor = "default";
 });
 
-canvas.addEventListener("click", function(e) {
+canvas.addEventListener("click", function (e) {
     const scene = getCurrentScene();
     const pos = getCanvasMousePos(e);
 
