@@ -1,4 +1,8 @@
 function updateState(fighter) {
+    if (fighter.isAttacking) {
+        return; 
+    }
+
     if (fighter.velocityY < 0) {
         fighter.state = 'jump';
     } else if (fighter.velocityY > 0) {
