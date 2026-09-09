@@ -162,8 +162,8 @@ class Fighter {
     }
 }
 
-const player1 = new Fighter(200, 0, 'red', 1, 'character-sprites.png', 'character-atlas.json');
-const player2 = new Fighter(canvas.width - 250, 0, 'blue', -1, 'character-sprites.png', 'character-atlas.json');
+const player1 = new Fighter(200, 0, 'red', 1, 'assets/character-sprites.png', 'character-atlas.json');
+const player2 = new Fighter(canvas.width - 250, 0, 'blue', -1, 'assets/character-sprites.png', 'character-atlas.json');
 
 window.player1 = player1;
 window.player2 = player2;
