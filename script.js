@@ -325,14 +325,31 @@ function gameLoop() {
     }
     requestAnimationFrame(gameLoop);
 }
+function resetFight() {
+    character1.health = 100;
+    character2.health = 100;
+    character1.x = 200;
+    character1.y = canvas.height - character1.height;
+    character1.velocityY = 0;
+    character1.isAttacking = false;
+    character1.state = 'idle';
+    character2.x = canvas.width - 250;
+    character2.y = canvas.height - character2.height;
+    character2.velocityY = 0;
+    character2.isAttacking = false;
+    character2.state = 'idle';
+    character2.aiDecisionTimer = 0;
+    if (window.projectiles) window.projectiles.length = 0;
+    result = null;
+    window.matchResult = null;
+    if (typeof timer !== 'undefined') window.timer = 60; // Just in case
+    playRoundStart();
+    goTo("fight");
+}
 function executeMenuOption(index) {
     const item = MENU_ITEMS[index];
     if (item.id === "start") {
-        character1.health = 100;
-        character2.health = 100;
-        result = null;
-        playRoundStart();
-        goTo("fight");
+        resetFight();
     } else if (item.id === "character-select") {
         goTo("character-select");
     } else if (item.id === "background-select") {
@@ -385,11 +402,7 @@ window.addEventListener("keydown", function (event) {
             const nextIdx = (getSelectedCharacterIndex() + 1) % CHARACTERS.length;
             setSelectedCharacterIndex(nextIdx);
         } else if (event.key === "Enter" || event.key === " ") {
-            character1.health = 100;
-            character2.health = 100;
-            result = null;
-            playRoundStart();
-            goTo("fight");
+            resetFight();
         } else if (event.key === "Escape") {
             goTo("menu");
         }
@@ -399,11 +412,7 @@ window.addEventListener("keydown", function (event) {
         }
     } else if (scene === "results") {
         if (event.key === "Enter" || event.key === " ") {
-            character1.health = 100;
-            character2.health = 100;
-            result = null;
-            playRoundStart();
-            goTo("fight");
+            resetFight();
         } else if (event.key === "Escape") {
             goTo("menu");
         }
@@ -518,11 +527,7 @@ canvas.addEventListener("click", function (e) {
             if (pos.x >= card.x && pos.x <= card.x + card.width &&
                 pos.y >= card.y && pos.y <= card.y + card.height) {
                 setSelectedCharacterIndex(card.index);
-                playRoundStart();
-                character1.health = 100;
-                character2.health = 100;
-                result = null;
-                goTo("fight");
+                resetFight();
                 break;
             }
         }
