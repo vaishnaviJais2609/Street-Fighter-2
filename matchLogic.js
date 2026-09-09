@@ -1,12 +1,65 @@
 function updateAI(p1, p2) {
-    p2.velocityX = 0;
-    
-    let distance = p1.x - p2.x;
-    if (Math.abs(distance) > 50) {
-        if (distance > 0) {
-            p2.velocityX = p2.speed - 1;
+    if (p2.aiDecisionTimer > 0) {
+        p2.aiDecisionTimer--;
+        
+        // Let the AI finish its jumping/falling animation
+        if (p2.y + p2.height < 600 && p2.velocityY !== 0) return; 
+        // Note: 600 is roughly canvas.height - player.height, but Fighter logic handles landing natively
+    }
+
+    // Dodge incoming fireballs
+    if (window.projectiles) {
+        for (let i = 0; i < window.projectiles.length; i++) {
+            const proj = window.projectiles[i];
+            if (proj.state !== 'fireball_impact' && proj.facing !== p2.facing) {
+                let distToProj = Math.abs(proj.x - p2.x);
+                if (distToProj < 200 && p2.y + p2.height >= 550) { // If on the ground and fireball is close
+                    p2.velocityY = -15; // Jump to dodge!
+                    p2.aiDecisionTimer = 40; // Lock decision while jumping
+                    return;
+                }
+            }
+        }
+    }
+
+    if (p2.aiDecisionTimer <= 0 && !p2.isAttacking) {
+        let distance = p1.x - p2.x;
+        let absDist = Math.abs(distance);
+        let rand = Math.random();
+
+        p2.velocityX = 0;
+
+        if (absDist < 120) {
+            // Close range: mostly attack
+            if (rand < 0.7) {
+                p2.attack();
+                p2.aiDecisionTimer = 40;
+            } else {
+                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; // Walk back
+                p2.aiDecisionTimer = 20;
+            }
+        } else if (absDist >= 120 && absDist <= 350) {
+            // Mid range: walk forward, fireball, or jump forward
+            if (rand < 0.6) {
+                p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed; // Walk forward
+                p2.aiDecisionTimer = 30;
+            } else if (rand < 0.9) {
+                p2.specialMove();
+                p2.aiDecisionTimer = 60;
+            } else {
+                p2.velocityY = -15;
+                p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed;
+                p2.aiDecisionTimer = 50;
+            }
         } else {
-            p2.velocityX = -(p2.speed - 1);
+            // Long range: mostly shoot fireballs or walk forward
+            if (rand < 0.7) {
+                p2.specialMove();
+                p2.aiDecisionTimer = 70;
+            } else {
+                p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed;
+                p2.aiDecisionTimer = 40;
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ const gravity = 0.7;
 const FRAME_DELAY = 5;
 
 class Projectile {
-    constructor({ x, y, velocity, image, animations, facing }) {
+    constructor({ x, y, velocity, image, animations, facing, owner }) {
         this.x = x;
         this.y = y;
         this.velocity = velocity;
@@ -23,6 +23,7 @@ class Projectile {
         this.extraImages = {};
         this.animations = animations;
         this.facing = facing;
+        this.owner = owner;
         this.state = 'fireball';
         this.frameIndex = 0;
         this.frameTimer = 0;
@@ -46,9 +47,11 @@ class Projectile {
         const destWidth = rect.w * scale;
         const destHeight = rect.h * scale;
         
+        const offset = frameData.offset || { x: 0, y: 0 };
+        
         ctx.save();
         if (this.facing === -1) {
-            ctx.translate(this.x + destWidth, this.y);
+            ctx.translate(this.x + destWidth + (offset.x * scale * this.facing), this.y + (offset.y * scale));
             ctx.scale(-1, 1);
             ctx.drawImage(
                 currentImage,
@@ -59,7 +62,7 @@ class Projectile {
             ctx.drawImage(
                 currentImage,
                 rect.x, rect.y, rect.w, rect.h,
-                this.x, this.y, destWidth, destHeight
+                this.x + (offset.x * scale * this.facing), this.y + (offset.y * scale), destWidth, destHeight
             );
         }
         ctx.restore();
@@ -121,16 +124,18 @@ class Fighter {
         this.image = null;
         this.extraImages = {};
         this.animations = {};
+        
+        this.aiDecisionTimer = 0;
     }
 
     async loadAssets() {
         if (!this.imageSrc || !this.atlasSrc) return;
         
         this.image = new Image();
-        this.image.src = this.imageSrc;
+        this.image.src = this.imageSrc + '?v=' + Date.now();
         
         try {
-            const response = await fetch(this.atlasSrc);
+            const response = await fetch(this.atlasSrc + '?v=' + Date.now());
             if (response.ok) {
                 const atlas = await response.json();
                 this.animations = buildAnimations(atlas);
@@ -143,7 +148,7 @@ class Fighter {
                 }
                 for (const sheet of sheetsToLoad) {
                     const img = new Image();
-                    img.src = 'assets/' + sheet;
+                    img.src = 'assets/' + sheet + '?v=' + Date.now();
                     this.extraImages[sheet] = img;
                 }
 
@@ -187,8 +192,9 @@ class Fighter {
             const destWidth = rect.w * scale;
             const destHeight = rect.h * scale;
             
-            const destX = this.x + (this.width / 2) - (destWidth / 2);
-            const destY = this.y + this.height - destHeight;
+            const offset = frameData.offset || { x: 0, y: 0 };
+            const destX = this.x + (this.width / 2) - (destWidth / 2) + (offset.x * scale * this.facing);
+            const destY = this.y + this.height - destHeight + (offset.y * scale);
             
             ctx.save();
             if (this.facing === -1) {
@@ -221,7 +227,8 @@ class Fighter {
                                 velocity: { x: this.facing === 1 ? 10 : -10, y: 0 },
                                 image: this.image,
                                 animations: this.animations,
-                                facing: this.facing
+                                facing: this.facing,
+                                owner: this
                             }));
                             projectiles[projectiles.length - 1].extraImages = this.extraImages;
                         }
@@ -246,6 +253,16 @@ class Fighter {
 
     specialMove() {
         if (this.isAttacking) return;
+        
+        // Prevent shooting if a projectile from this fighter is already on screen
+        if (window.projectiles) {
+            for (let i = 0; i < window.projectiles.length; i++) {
+                if (window.projectiles[i].owner === this) {
+                    return;
+                }
+            }
+        }
+        
         this.isAttacking = true;
         this.state = 'special'; 
         this.frameIndex = 0;
@@ -362,7 +379,8 @@ function buildAnimations(atlas) {
         if (!anims[animName]) anims[animName] = [];
         anims[animName].push({
             rect: atlas.frames[frameName].frame,
-            sheet: atlas.frames[frameName].sheet || null
+            sheet: atlas.frames[frameName].sheet || null,
+            offset: atlas.frames[frameName].offset || null
         });
     }
     return anims;
