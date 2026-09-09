@@ -12,6 +12,9 @@ window.addEventListener('keydown', (event) => {
     if (event.key === ' ' && typeof player1 !== 'undefined') {
         player1.attack();
     }
+    if (event.key === 'e' && typeof player1 !== 'undefined') {
+        player1.specialMove();
+    }
 });
 
 window.addEventListener('keyup', (event) => {

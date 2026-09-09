@@ -14,6 +14,80 @@ window.addEventListener("resize", resizeCanvas);
 const gravity = 0.7;
 const FRAME_DELAY = 5;
 
+class Projectile {
+    constructor({ x, y, velocity, image, animations, facing }) {
+        this.x = x;
+        this.y = y;
+        this.velocity = velocity;
+        this.image = image;
+        this.animations = animations;
+        this.facing = facing;
+        this.state = 'fireball';
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+        this.markedForDeletion = false;
+        
+        this.width = 50; 
+        this.height = 50;
+    }
+
+    draw() {
+        if (!this.image || !this.animations[this.state]) return;
+        
+        const frames = this.animations[this.state];
+        const rect = frames[this.frameIndex % frames.length];
+        
+        const scale = 2;
+        const destWidth = rect.w * scale;
+        const destHeight = rect.h * scale;
+        
+        ctx.save();
+        if (this.facing === -1) {
+            ctx.translate(this.x + destWidth, this.y);
+            ctx.scale(-1, 1);
+            ctx.drawImage(
+                this.image,
+                rect.x, rect.y, rect.w, rect.h,
+                0, 0, destWidth, destHeight
+            );
+        } else {
+            ctx.drawImage(
+                this.image,
+                rect.x, rect.y, rect.w, rect.h,
+                this.x, this.y, destWidth, destHeight
+            );
+        }
+        ctx.restore();
+
+        this.frameTimer++;
+        if (this.frameTimer > FRAME_DELAY) {
+            if (this.state === 'fireball_impact') {
+                if (this.frameIndex < frames.length - 1) {
+                    this.frameIndex++;
+                } else {
+                    this.markedForDeletion = true;
+                }
+            } else {
+                this.frameIndex = (this.frameIndex + 1) % frames.length;
+            }
+            this.frameTimer = 0;
+        }
+    }
+
+    update() {
+        this.draw();
+        
+        if (this.state !== 'fireball_impact') {
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+        }
+
+        if (this.x > canvas.width || this.x + this.width < 0) {
+            this.markedForDeletion = true;
+        }
+    }
+}
+
 class Fighter {
     constructor(x, y, color, facing, imageSrc, atlasSrc) {
         this.x = x;
@@ -113,10 +187,20 @@ class Fighter {
 
             this.frameTimer++;
             if (this.frameTimer > FRAME_DELAY) {
-                if (this.state === 'punch' || this.state === 'kick') {
+                if (this.state === 'punch' || this.state === 'kick' || this.state === 'special') {
                     if (this.frameIndex < frames.length - 1) {
                         this.frameIndex++;
                     } else {
+                        if (this.state === 'special') {
+                            projectiles.push(new Projectile({
+                                x: this.facing === 1 ? this.x + this.width : this.x - 50,
+                                y: this.y + 20,
+                                velocity: { x: this.facing === 1 ? 10 : -10, y: 0 },
+                                image: this.image,
+                                animations: this.animations,
+                                facing: this.facing
+                            }));
+                        }
                         this.isAttacking = false;
                         this.state = 'idle';
                     }
@@ -132,6 +216,14 @@ class Fighter {
         if (this.isAttacking) return;
         this.isAttacking = true;
         this.state = 'punch'; 
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+    }
+
+    specialMove() {
+        if (this.isAttacking) return;
+        this.isAttacking = true;
+        this.state = 'special'; 
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
@@ -171,6 +263,9 @@ window.player2 = player2;
 let player1Wins = 0;
 let player2Wins = 0;
 
+const projectiles = [];
+window.projectiles = projectiles;
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -203,6 +298,14 @@ function gameLoop() {
 
     player1.update();
     player2.update();
+
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+        const projectile = projectiles[i];
+        projectile.update();
+        if (projectile.markedForDeletion) {
+            projectiles.splice(i, 1);
+        }
+    }
 
     if (typeof checkHits === 'function') {
         checkHits(player1, player2);

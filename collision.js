@@ -1,8 +1,17 @@
-function detectCollision(rect1, rect2) {
+function detectCollision(player1, player2) {
     return (
-        rect1.attackBox.x < rect2.x + rect2.width &&
-        rect1.attackBox.x + rect1.attackBox.width > rect2.x &&
-        rect1.attackBox.y < rect2.y + rect2.height &&
-        rect1.attackBox.y + rect1.attackBox.height > rect2.y
+        player1.attackBox.x + player1.attackBox.width >= player2.x &&
+        player1.attackBox.x <= player2.x + player2.width &&
+        player1.attackBox.y + player1.attackBox.height >= player2.y &&
+        player1.attackBox.y <= player2.y + player2.height
+    );
+}
+
+function detectProjectileCollision(projectile, player) {
+    return (
+        projectile.x + projectile.width >= player.x &&
+        projectile.x <= player.x + player.width &&
+        projectile.y + projectile.height >= player.y &&
+        projectile.y <= player.y + player.height
     );
 }
