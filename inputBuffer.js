@@ -4,7 +4,6 @@ const keys = {
     w: { pressed: false },
     ' ': { pressed: false }
 };
-
 window.addEventListener('keydown', (event) => {
     if (keys[event.key]) {
         keys[event.key].pressed = true;
@@ -16,7 +15,6 @@ window.addEventListener('keydown', (event) => {
         window.player1.specialMove();
     }
 });
-
 window.addEventListener('keyup', (event) => {
     if (keys[event.key]) {
         keys[event.key].pressed = false;

@@ -6,7 +6,6 @@ function detectCollision(player1, player2) {
         player1.attackBox.y <= player2.y + player2.height
     );
 }
-
 function detectProjectileCollision(projectile, player) {
     return (
         projectile.x + projectile.width >= player.x &&

@@ -2,7 +2,6 @@ function updateState(fighter) {
     if (fighter.isAttacking) {
         return; 
     }
-
     if (window.matchResult) {
         fighter.isAttacking = false;
         if (fighter.velocityY !== 0) {
@@ -16,7 +15,6 @@ function updateState(fighter) {
         }
         return;
     }
-
     if (fighter.velocityY < 0) {
         fighter.state = 'jump';
     } else if (fighter.velocityY > 0) {
