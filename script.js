@@ -97,6 +97,7 @@ class Fighter {
         this.state = 'idle';
         this.health = 100;
         this.isAttacking = false;
+        this.hasHit = false;
         this.attackBox = {
             x: this.x,
             y: this.y,
@@ -217,6 +218,7 @@ class Fighter {
     attack() {
         if (this.isAttacking) return;
         this.isAttacking = true;
+        this.hasHit = false;
         this.state = 'punch'; 
         this.frameIndex = 0;
         this.frameTimer = 0;
@@ -231,6 +233,7 @@ class Fighter {
             }
         }
         this.isAttacking = true;
+        this.hasHit = false;
         this.state = 'special'; 
         this.frameIndex = 0;
         this.frameTimer = 0;
@@ -306,6 +309,9 @@ function gameLoop() {
         }
         character1.update();
         character2.update();
+        if (typeof checkBodyCollision === 'function') {
+            checkBodyCollision(character1, character2, canvas.width);
+        }
         for (let i = window.projectiles.length - 1; i >= 0; i--) {
             const projectile = window.projectiles[i];
             projectile.update();

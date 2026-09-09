@@ -14,3 +14,21 @@ function detectProjectileCollision(projectile, player) {
         projectile.y <= player.y + player.height
     );
 }
+function checkBodyCollision(p1, p2, canvasWidth) {
+    if (p1.x < p2.x + p2.width && p1.x + p1.width > p2.x &&
+        p1.y < p2.y + p2.height && p1.y + p1.height > p2.y) {
+        let overlapX = Math.min(p1.x + p1.width - p2.x, p2.x + p2.width - p1.x);
+        let shift = overlapX / 2;
+        if (p1.x < p2.x) {
+            p1.x -= shift;
+            p2.x += shift;
+        } else {
+            p1.x += shift;
+            p2.x -= shift;
+        }
+        if (p1.x < 0) { p2.x += (0 - p1.x); p1.x = 0; }
+        if (p2.x < 0) { p1.x += (0 - p2.x); p2.x = 0; }
+        if (p1.x > canvasWidth - p1.width) { p2.x -= (p1.x - (canvasWidth - p1.width)); p1.x = canvasWidth - p1.width; }
+        if (p2.x > canvasWidth - p2.width) { p1.x -= (p2.x - (canvasWidth - p2.width)); p2.x = canvasWidth - p2.width; }
+    }
+}

@@ -21,15 +21,18 @@ function updateAI(p1, p2) {
         let absDist = Math.abs(distance);
         let rand = Math.random();
         p2.velocityX = 0;
-        if (absDist < 120) {
-            if (rand < 0.7) {
+        if (absDist <= 95) {
+            if (rand < 0.6) {
                 p2.attack();
                 p2.aiDecisionTimer = 40;
+            } else if (rand < 0.8 && absDist < 60) {
+                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; 
+                p2.aiDecisionTimer = 15;
             } else {
                 p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; 
                 p2.aiDecisionTimer = 20;
             }
-        } else if (absDist >= 120 && absDist <= 350) {
+        } else if (absDist > 95 && absDist <= 350) {
             if (rand < 0.6) {
                 p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed; 
                 p2.aiDecisionTimer = 30;
@@ -54,13 +57,14 @@ function updateAI(p1, p2) {
 }
 function checkHits(p1, p2) {
     if (window.matchResult) return;
-    if (p1.isAttacking && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
-        p1.isAttacking = false;
+    if (p1.isAttacking && !p1.hasHit && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
+        p1.hasHit = true;
         p2.health -= 10;
         if (p2.health < 0) p2.health = 0;
     }
-    if (p2.isAttacking && typeof detectCollision === 'function' && detectCollision(p2, p1)) {
-        p2.isAttacking = false;
+
+    if (p2.isAttacking && !p2.hasHit && typeof detectCollision === 'function' && detectCollision(p2, p1)) {
+        p2.hasHit = true;
         p1.health -= 10;
         if (p1.health < 0) p1.health = 0;
     }
