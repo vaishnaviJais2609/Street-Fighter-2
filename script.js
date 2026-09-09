@@ -247,6 +247,8 @@ class Fighter {
         }
         this.draw();
         this.x += this.velocityX;
+        if (this.x < 0) this.x = 0;
+        if (this.x > canvas.width - this.width) this.x = canvas.width - this.width;
         this.y += this.velocityY;
         if (this.y + this.height + this.velocityY >= canvas.height) {
             this.velocityY = 0;
