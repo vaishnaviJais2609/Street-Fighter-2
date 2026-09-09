@@ -65,21 +65,41 @@ function updateAI(p1, p2) {
 }
 
 function checkHits(p1, p2) {
+    // Melee collisions
     if (p1.isAttacking && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
         p1.isAttacking = false;
         p2.health -= 10;
         if (p2.health < 0) p2.health = 0;
     }
+    
+    if (p2.isAttacking && typeof detectCollision === 'function' && detectCollision(p2, p1)) {
+        p2.isAttacking = false;
+        p1.health -= 10;
+        if (p1.health < 0) p1.health = 0;
+    }
 
+    // Projectile collisions
     if (window.projectiles && typeof detectProjectileCollision === 'function') {
         for (let i = 0; i < window.projectiles.length; i++) {
             const proj = window.projectiles[i];
-            if (proj.state !== 'fireball_impact' && detectProjectileCollision(proj, p2)) {
-                proj.state = 'fireball_impact';
-                proj.frameIndex = 0;
-                proj.velocity.x = 0;
-                p2.health -= 15;
-                if (p2.health < 0) p2.health = 0;
+            
+            if (proj.state !== 'fireball_impact') {
+                // Check hit on Player 2
+                if (proj.owner !== p2 && detectProjectileCollision(proj, p2)) {
+                    proj.state = 'fireball_impact';
+                    proj.frameIndex = 0;
+                    proj.velocity.x = 0;
+                    p2.health -= 15;
+                    if (p2.health < 0) p2.health = 0;
+                }
+                // Check hit on Player 1
+                else if (proj.owner !== p1 && detectProjectileCollision(proj, p1)) {
+                    proj.state = 'fireball_impact';
+                    proj.frameIndex = 0;
+                    proj.velocity.x = 0;
+                    p1.health -= 15;
+                    if (p1.health < 0) p1.health = 0;
+                }
             }
         }
     }
