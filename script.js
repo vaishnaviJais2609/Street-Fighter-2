@@ -1,8 +1,15 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+import { drawUI } from "./render/ui.js";
+import { drawBackground } from "./render/stage.js";
 
-canvas.width = 1024;
-canvas.height = 576;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 const gravity = 0.7;
 
@@ -69,8 +76,16 @@ class Fighter {
 const player1 = new Fighter(200, 0, 'red');
 const player2 = new Fighter(canvas.width - 250, 0, 'blue');
 
+window.player1 = player1;
+window.player2 = player2;
+
+let player1Wins = 0;
+let player2Wins = 0;
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    drawBackground(ctx, canvas);
 
     player1.velocityX = 0;
     if (typeof keys !== 'undefined') {
@@ -96,6 +111,19 @@ function gameLoop() {
     if (typeof determineWinner === 'function') {
         determineWinner(player1, player2);
     }
+
+    let currentTimer = typeof timer !== 'undefined' ? timer : 60;
+    
+    drawUI(
+        ctx,
+        canvas,
+        player1,
+        player2,
+        currentTimer,
+        player1Wins,
+        player2Wins,
+        window.matchResult
+    );
 
     requestAnimationFrame(gameLoop);
 }

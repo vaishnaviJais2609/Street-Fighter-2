@@ -7,23 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-wrapper">
-        <div id="ui-container">
-            <div id="player1-health-bar">
-                <div id="player1-health"></div>
-            </div>
-            <div id="timer">60</div>
-            <div id="player2-health-bar">
-                <div id="player2-health"></div>
-            </div>
-        </div>
-        <div id="result-text"></div>
-        <canvas id="canvas"></canvas>
-    </div>
+    <canvas id="gameCanvas"></canvas>
     <script src="stateMachine.js"></script>
     <script src="collision.js"></script>
     <script src="matchLogic.js"></script>
-    <script src="script.js"></script>
     <script src="inputBuffer.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
