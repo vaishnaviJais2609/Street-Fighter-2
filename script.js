@@ -20,6 +20,7 @@ class Projectile {
         this.y = y;
         this.velocity = velocity;
         this.image = image;
+        this.extraImages = {};
         this.animations = animations;
         this.facing = facing;
         this.state = 'fireball';
@@ -35,8 +36,12 @@ class Projectile {
         if (!this.image || !this.animations[this.state]) return;
         
         const frames = this.animations[this.state];
-        const rect = frames[this.frameIndex % frames.length];
+        const frameData = frames[this.frameIndex % frames.length];
+        const rect = frameData.rect;
+        const currentImage = frameData.sheet ? this.extraImages[frameData.sheet] : this.image;
         
+        if (!currentImage) return;
+
         const scale = 2;
         const destWidth = rect.w * scale;
         const destHeight = rect.h * scale;
@@ -46,13 +51,13 @@ class Projectile {
             ctx.translate(this.x + destWidth, this.y);
             ctx.scale(-1, 1);
             ctx.drawImage(
-                this.image,
+                currentImage,
                 rect.x, rect.y, rect.w, rect.h,
                 0, 0, destWidth, destHeight
             );
         } else {
             ctx.drawImage(
-                this.image,
+                currentImage,
                 rect.x, rect.y, rect.w, rect.h,
                 this.x, this.y, destWidth, destHeight
             );
@@ -114,6 +119,7 @@ class Fighter {
         this.imageSrc = imageSrc;
         this.atlasSrc = atlasSrc;
         this.image = null;
+        this.extraImages = {};
         this.animations = {};
     }
 
@@ -128,6 +134,19 @@ class Fighter {
             if (response.ok) {
                 const atlas = await response.json();
                 this.animations = buildAnimations(atlas);
+                
+                const sheetsToLoad = new Set();
+                for (const anim in this.animations) {
+                    for (const frame of this.animations[anim]) {
+                        if (frame.sheet) sheetsToLoad.add(frame.sheet);
+                    }
+                }
+                for (const sheet of sheetsToLoad) {
+                    const img = new Image();
+                    img.src = 'assets/' + sheet;
+                    this.extraImages[sheet] = img;
+                }
+
                 this.animations['walk'] = this.animations['idle'];
             } else {
                 console.warn(`Could not load ${this.atlasSrc}`);
@@ -158,8 +177,12 @@ class Fighter {
 
         const frames = this.animations[animState];
         if (frames && frames.length > 0) {
-            const rect = frames[this.frameIndex % frames.length];
+            const frameData = frames[this.frameIndex % frames.length];
+            const rect = frameData.rect;
+            const currentImage = frameData.sheet ? this.extraImages[frameData.sheet] : this.image;
             
+            if (!currentImage) return;
+
             const scale = 2;
             const destWidth = rect.w * scale;
             const destHeight = rect.h * scale;
@@ -172,13 +195,13 @@ class Fighter {
                 ctx.translate(destX + destWidth, destY);
                 ctx.scale(-1, 1);
                 ctx.drawImage(
-                    this.image,
+                    currentImage,
                     rect.x, rect.y, rect.w, rect.h,
                     0, 0, destWidth, destHeight
                 );
             } else {
                 ctx.drawImage(
-                    this.image,
+                    currentImage,
                     rect.x, rect.y, rect.w, rect.h,
                     destX, destY, destWidth, destHeight
                 );
@@ -200,6 +223,7 @@ class Fighter {
                                 animations: this.animations,
                                 facing: this.facing
                             }));
+                            projectiles[projectiles.length - 1].extraImages = this.extraImages;
                         }
                         this.isAttacking = false;
                         this.state = 'idle';
@@ -255,7 +279,7 @@ class Fighter {
 }
 
 const player1 = new Fighter(200, 0, 'red', 1, 'assets/character-sprites.png', 'character-atlas.json');
-const player2 = new Fighter(canvas.width - 250, 0, 'blue', -1, 'assets/character-sprites.png', 'character-atlas.json');
+const player2 = new Fighter(canvas.width - 250, 0, 'blue', -1, 'assets/player2-sprites.png', 'character2-atlas.json');
 
 window.player1 = player1;
 window.player2 = player2;
@@ -336,7 +360,10 @@ function buildAnimations(atlas) {
     for (const frameName in atlas.frames) {
         const animName = frameName.replace(/_\d+$/, '');
         if (!anims[animName]) anims[animName] = [];
-        anims[animName].push(atlas.frames[frameName].frame);
+        anims[animName].push({
+            rect: atlas.frames[frameName].frame,
+            sheet: atlas.frames[frameName].sheet || null
+        });
     }
     return anims;
 }
