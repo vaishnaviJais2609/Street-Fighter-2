@@ -9,10 +9,10 @@ window.addEventListener('keydown', (event) => {
     if (keys[event.key]) {
         keys[event.key].pressed = true;
     }
-    if (event.key === ' ' && typeof player1 !== 'undefined') {
+    if (event.key === ' ' && typeof player1 !== 'undefined' && !window.matchResult) {
         player1.attack();
     }
-    if (event.key === 'e' && typeof player1 !== 'undefined') {
+    if (event.key === 'e' && typeof player1 !== 'undefined' && !window.matchResult) {
         player1.specialMove();
     }
 });

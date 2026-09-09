@@ -236,7 +236,11 @@ class Fighter {
                         this.state = 'idle';
                     }
                 } else {
-                    this.frameIndex = (this.frameIndex + 1) % frames.length;
+                    if (window.matchResult && this.frameIndex === frames.length - 1) {
+                        // Stop looping when game is over
+                    } else {
+                        this.frameIndex = (this.frameIndex + 1) % frames.length;
+                    }
                 }
                 this.frameTimer = 0;
             }
@@ -313,27 +317,30 @@ function gameLoop() {
     drawBackground(ctx, canvas);
 
     player1.velocityX = 0;
-    if (typeof keys !== 'undefined') {
-        if (keys.a.pressed) {
-            player1.velocityX = -player1.speed;
-            player1.facing = -1;
-        } else if (keys.d.pressed) {
-            player1.velocityX = player1.speed;
-            player1.facing = 1;
-        }
-
-        if (keys.w.pressed && player1.y + player1.height >= canvas.height) {
-            player1.velocityY = -15;
-        }
-    }
-
-    if (typeof updateAI === 'function') {
-        updateAI(player1, player2);
     
-        if (player1.x < player2.x) {
-            player2.facing = -1;
-        } else {
-            player2.facing = 1;
+    if (!window.matchResult) {
+        if (typeof keys !== 'undefined') {
+            if (keys.a.pressed) {
+                player1.velocityX = -player1.speed;
+                player1.facing = -1;
+            } else if (keys.d.pressed) {
+                player1.velocityX = player1.speed;
+                player1.facing = 1;
+            }
+
+            if (keys.w.pressed && player1.y + player1.height >= canvas.height) {
+                player1.velocityY = -15;
+            }
+        }
+
+        if (typeof updateAI === 'function') {
+            updateAI(player1, player2);
+        
+            if (player1.x < player2.x) {
+                player2.facing = -1;
+            } else {
+                player2.facing = 1;
+            }
         }
     }
 

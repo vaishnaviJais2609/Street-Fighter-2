@@ -65,6 +65,8 @@ function updateAI(p1, p2) {
 }
 
 function checkHits(p1, p2) {
+    if (window.matchResult) return;
+
     // Melee collisions
     if (p1.isAttacking && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
         p1.isAttacking = false;

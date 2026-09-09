@@ -3,6 +3,20 @@ function updateState(fighter) {
         return; 
     }
 
+    if (window.matchResult) {
+        fighter.isAttacking = false;
+        if (fighter.velocityY !== 0) {
+            fighter.state = fighter.velocityY < 0 ? 'jump' : 'fall';
+        } else {
+            if (fighter.health <= 0 && fighter.animations['knockdown']) {
+                fighter.state = 'knockdown';
+            } else {
+                fighter.state = 'idle';
+            }
+        }
+        return;
+    }
+
     if (fighter.velocityY < 0) {
         fighter.state = 'jump';
     } else if (fighter.velocityY > 0) {
