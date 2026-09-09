@@ -7,11 +7,8 @@ canvas.height = 576;
 const gravity = 0.7;
 const FRAME_DELAY = 5;
 
-let sheetImage;
-let animations = {};
-
 class Fighter {
-    constructor(x, y, color, facing) {
+    constructor(x, y, color, facing, imageSrc, atlasSrc) {
         this.x = x;
         this.y = y;
         this.width = 50;
@@ -22,6 +19,7 @@ class Fighter {
         this.velocityX = 0;
         this.speed = 5;
         this.state = 'idle';
+        this.health = 100;
         this.isAttacking = false;
         this.attackBox = {
             x: this.x,
@@ -31,10 +29,35 @@ class Fighter {
         };
         this.frameIndex = 0;
         this.frameTimer = 0;
+        
+        this.imageSrc = imageSrc;
+        this.atlasSrc = atlasSrc;
+        this.image = null;
+        this.animations = {};
+    }
+
+    async loadAssets() {
+        if (!this.imageSrc || !this.atlasSrc) return;
+        
+        this.image = new Image();
+        this.image.src = this.imageSrc;
+        
+        try {
+            const response = await fetch(this.atlasSrc);
+            if (response.ok) {
+                const atlas = await response.json();
+                this.animations = buildAnimations(atlas);
+                this.animations['walk'] = this.animations['idle'];
+            } else {
+                console.warn(`Could not load ${this.atlasSrc}`);
+            }
+        } catch (e) {
+            console.warn('Error loading assets:', e);
+        }
     }
 
     draw() {
-        if (!sheetImage || Object.keys(animations).length === 0) {
+        if (!this.image || Object.keys(this.animations).length === 0) {
             
             ctx.fillStyle = this.color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -48,11 +71,11 @@ class Fighter {
 
     
         let animState = this.state;
-        if (!animations[animState]) {
+        if (!this.animations[animState]) {
             animState = 'idle';
         }
 
-        const frames = animations[animState];
+        const frames = this.animations[animState];
         if (frames && frames.length > 0) {
             const rect = frames[this.frameIndex % frames.length];
             
@@ -68,13 +91,13 @@ class Fighter {
                 ctx.translate(destX + destWidth, destY);
                 ctx.scale(-1, 1);
                 ctx.drawImage(
-                    sheetImage,
+                    this.image,
                     rect.x, rect.y, rect.w, rect.h,
                     0, 0, destWidth, destHeight
                 );
             } else {
                 ctx.drawImage(
-                    sheetImage,
+                    this.image,
                     rect.x, rect.y, rect.w, rect.h,
                     destX, destY, destWidth, destHeight
                 );
@@ -132,8 +155,8 @@ class Fighter {
     }
 }
 
-const player1 = new Fighter(200, 0, 'red', 1);
-const player2 = new Fighter(canvas.width - 250, 0, 'blue', -1);
+const player1 = new Fighter(200, 0, 'red', 1, 'character-sprites.png', 'character-atlas.json');
+const player2 = new Fighter(canvas.width - 250, 0, 'blue', -1, 'character-sprites.png', 'character-atlas.json');
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -170,6 +193,10 @@ function gameLoop() {
         checkHits(player1, player2);
     }
 
+    if (typeof determineWinner === 'function') {
+        determineWinner(player1, player2);
+    }
+
     requestAnimationFrame(gameLoop);
 }
 
@@ -184,21 +211,10 @@ function buildAnimations(atlas) {
 }
 
 async function init() {
-    try {
-        sheetImage = new Image();
-        sheetImage.src = 'character-sprites.png';
-        
-        const response = await fetch('character-atlas.json');
-        if (response.ok) {
-            const atlas = await response.json();
-            animations = buildAnimations(atlas);
-            animations['walk'] = animations['idle'];
-        } else {
-            console.warn('Could not load assets/character-atlas.json. Place the assets in the assets/ folder.');
-        }
-    } catch (e) {
-        console.warn('Error loading assets:', e);
-    }
+    await Promise.all([
+        player1.loadAssets(),
+        player2.loadAssets()
+    ]);
 
     if (typeof decreaseTimer === 'function') {
         decreaseTimer(player1, player2);
