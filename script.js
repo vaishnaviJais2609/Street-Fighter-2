@@ -1,4 +1,4 @@
-import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
+import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, drawInstructions, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
 import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
 import { updateSFX, playRoundStart, playWin } from "./render/sfx.js";
@@ -26,6 +26,14 @@ let player2Wins = 0;
 let result = null;
 let testTimer = 99;
 
+let isMultiplayer = false;
+window.isMultiplayer = isMultiplayer;
+
+function setMultiplayer(value) {
+    isMultiplayer = value;
+    window.isMultiplayer = value;
+}
+
 let hoveredMenuIndex = -1;
 let hoveredStageIndex = -1;
 let hoveredCharIndex = -1;
@@ -46,6 +54,8 @@ function gameLoop() {
         drawUI(ctx, canvas, character1, character2, testTimer, player1Wins, player2Wins, result);
     } else if (scene === "results") {
         drawResults();
+    } else if (scene === "instructions") {
+        drawInstructions(ctx, canvas);
     }
 
     requestAnimationFrame(gameLoop);
@@ -55,15 +65,27 @@ function executeMenuOption(index) {
     const item = MENU_ITEMS[index];
 
     if (item.id === "start") {
+        setMultiplayer(false);
         character1.health = 100;
         character2.health = 100;
         result = null;
         playRoundStart();
         goTo("fight");
-    } else if (item.id === "character-select") {
+    } else if (item.id === "multiplayer") {   // ← new branch
+        setMultiplayer(true);
+        character1.health = 100;
+        character2.health = 100;
+        result = null;
+        playRoundStart();
+        goTo("fight");
+    }
+    else if (item.id === "character-select") {
         goTo("character-select");
     } else if (item.id === "background-select") {
         goTo("background-select");
+    }
+    else if (item.id === "instructions") {
+        goTo("instructions");
     }
 }
 
@@ -118,6 +140,7 @@ window.addEventListener("keydown", function (event) {
             const nextIdx = (getSelectedCharacterIndex() + 1) % CHARACTERS.length;
             setSelectedCharacterIndex(nextIdx);
         } else if (event.key === "Enter" || event.key === " ") {
+            setMultiplayer(false);
             character1.health = 100;
             character2.health = 100;
             result = null;
@@ -130,7 +153,12 @@ window.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
             goTo("menu");
         }
-    } else if (scene === "results") {
+    } else if (scene === "instructions") {
+        if (event.key === "Escape" || event.key === "Enter" || event.key === " ") {
+            goTo("menu");
+        }
+    }
+    else if (scene === "results") {
         if (event.key === "Enter" || event.key === " ") {
             character1.health = 100;
             character2.health = 100;
@@ -266,6 +294,7 @@ canvas.addEventListener("click", function (e) {
             if (pos.x >= card.x && pos.x <= card.x + card.width &&
                 pos.y >= card.y && pos.y <= card.y + card.height) {
                 setSelectedCharacterIndex(card.index);
+                setMultiplayer(false);
                 playRoundStart();
                 character1.health = 100;
                 character2.health = 100;

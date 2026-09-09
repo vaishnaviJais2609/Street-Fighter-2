@@ -2,8 +2,10 @@ let currentScene = "menu";
 
 export const MENU_ITEMS = [
     { id: "start", label: "START GAME" },
+    { id: "multiplayer", label: "MULTI PLAYER" },
     { id: "character-select", label: "CHARACTER SELECT" },
-    { id: "background-select", label: "BACKGROUND SELECT" }
+    { id: "background-select", label: "BACKGROUND SELECT" },
+    { id: "instructions", label: "INSTRUCTIONS" }
 ];
 
 let selectedIndex = 0;
