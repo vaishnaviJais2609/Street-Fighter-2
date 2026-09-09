@@ -9,11 +9,12 @@ body {
     height: 100vh;
     background: black;
     overflow: hidden;
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    user-select: none;
 }
 
 canvas {
     display: block;
-
     width: 100vw;
     height: 100vh;
 }
