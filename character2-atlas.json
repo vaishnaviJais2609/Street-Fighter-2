@@ -1,0 +1,642 @@
+{
+  "frames": {
+    "idle_0": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      }
+    },
+    "fireball_0": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 463,
+        "y": 643,
+        "w": 52,
+        "h": 60
+      }
+    },
+    "fireball_1": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 549,
+        "y": 643,
+        "w": 36,
+        "h": 60
+      }
+    },
+    "fireball_2": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 463,
+        "y": 643,
+        "w": 52,
+        "h": 60
+      }
+    },
+    "special_0": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 8,
+        "y": 633,
+        "w": 43,
+        "h": 79
+      }
+    },
+    "special_1": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 63,
+        "y": 639,
+        "w": 48,
+        "h": 72
+      }
+    },
+    "special_2": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 135,
+        "y": 640,
+        "w": 51,
+        "h": 71
+      }
+    },
+    "special_3": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 206,
+        "y": 645,
+        "w": 83,
+        "h": 66
+      },
+      "offset": {
+        "x": 20,
+        "y": 0
+      }
+    },
+    "punch_0": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "punch_1": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "punch_2": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_0": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_1": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_2": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_3": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_4": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_5": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_6": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_7": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "kick_8": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_0": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_1": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_2": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_3": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_4": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_5": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_6": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_7": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "highkick_8": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_0": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_1": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_2": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_3": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_4": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_5": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_6": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_7": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "jump_8": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_0": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_1": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_2": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_3": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_4": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_5": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_6": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "crouch_7": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_0": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_1": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_2": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_3": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_4": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_5": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_6": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "knockdown_7": {
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      },
+      "sheet": "ryu-big-sheet.png"
+    },
+    "walk_forward_0": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 5,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      }
+    },
+    "walk_forward_1": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 53,
+        "y": 16,
+        "w": 35,
+        "h": 77
+      }
+    },
+    "walk_forward_2": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 104,
+        "y": 15,
+        "w": 34,
+        "h": 78
+      }
+    },
+    "walk_forward_3": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 153,
+        "y": 14,
+        "w": 34,
+        "h": 79
+      }
+    },
+    "walk_forward_4": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 208,
+        "y": 21,
+        "w": 28,
+        "h": 72
+      }
+    },
+    "walk_forward_5": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 250,
+        "y": 16,
+        "w": 37,
+        "h": 78
+      }
+    },
+    "walk_forward_6": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 303,
+        "y": 15,
+        "w": 37,
+        "h": 78
+      }
+    },
+    "walk_backward_0": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 3,
+        "y": 131,
+        "w": 37,
+        "h": 78
+      }
+    },
+    "walk_backward_1": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 52,
+        "y": 131,
+        "w": 53,
+        "h": 78
+      }
+    },
+    "walk_backward_2": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 117,
+        "y": 131,
+        "w": 37,
+        "h": 78
+      }
+    },
+    "walk_backward_3": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 170,
+        "y": 131,
+        "w": 37,
+        "h": 78
+      }
+    },
+    "walk_backward_4": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 221,
+        "y": 127,
+        "w": 44,
+        "h": 81
+      }
+    },
+    "walk_backward_5": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 280,
+        "y": 127,
+        "w": 62,
+        "h": 81
+      }
+    },
+    "fireball_3": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 549,
+        "y": 643,
+        "w": 36,
+        "h": 60
+      }
+    },
+    "fireball_4": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 463,
+        "y": 643,
+        "w": 52,
+        "h": 60
+      }
+    },
+    "special_4": {
+      "sheet": "ryu-big-sheet.png",
+      "frame": {
+        "x": 303,
+        "y": 645,
+        "w": 62,
+        "h": 66
+      },
+      "offset": {
+        "x": 10,
+        "y": 0
+      }
+    }
+  }
+}
