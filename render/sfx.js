@@ -52,9 +52,9 @@ export function playWin() {
 }
 
 export function playMenuMove() {
-    playSound(sounds.whiff);
+    // Menu navigation audio disabled per specification
 }
 
 export function playMenuSelect() {
-    playSound(sounds.hit);
+    // Menu selection audio disabled per specification; only starting game audio will keep
 }

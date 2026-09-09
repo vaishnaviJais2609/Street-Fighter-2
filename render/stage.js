@@ -1,7 +1,8 @@
 export const STAGES = [
     { id: "bg1", name: "SUZAKU CASTLE", src: "assets/bg1.jpeg" },
     { id: "bg2", name: "GRAND MANSION", src: "assets/bg2.jpeg" },
-    { id: "bg3", name: "HONDA BATHHOUSE", src: "assets/bg3.jpeg" }
+    { id: "bg3", name: "HONDA BATHHOUSE", src: "assets/bg3.jpeg" },
+    { id: "bg4", name: "TEMPLE DOJO", src: "assets/bg4.jpg" }
 ];
 
 export const stageImages = {};

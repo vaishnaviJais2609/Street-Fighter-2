@@ -1,6 +1,34 @@
 import { STAGES, getStageImage, getCurrentStageIndex, setStageIndex } from "./stage.js";
 import { MENU_ITEMS, getSelectedIndex } from "./menu.js";
 
+export const CHARACTERS = [
+    { id: "ryu", name: "RYU", fighterName: "JAPAN", src: "assets/ryu.jpg" },
+    { id: "master", name: "KEN MASTERS", fighterName: "USA", src: "assets/master.jpg" }
+];
+
+export const characterImages = {};
+CHARACTERS.forEach(c => {
+    const img = new Image();
+    img.src = c.src;
+    characterImages[c.id] = img;
+});
+
+let selectedCharacterIndex = 0;
+
+export function getSelectedCharacterIndex() {
+    return selectedCharacterIndex;
+}
+
+export function setSelectedCharacterIndex(idx) {
+    if (idx >= 0 && idx < CHARACTERS.length) {
+        selectedCharacterIndex = idx;
+    }
+}
+
+export function getSelectedCharacter() {
+    return CHARACTERS[selectedCharacterIndex];
+}
+
 const menuBg = new Image();
 menuBg.src = "assets/bg1.jpeg";
 
@@ -41,7 +69,7 @@ export function getMenuButtonBounds(canvas) {
     }));
 }
 
-export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex()) {
+export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex(), hoveredIndex = -1) {
     if (menuBg.complete && menuBg.naturalWidth > 0) {
         ctx.drawImage(menuBg, 0, 0, canvas.width, canvas.height);
     } else {
@@ -94,11 +122,16 @@ export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex()) {
 
     buttons.forEach((btn) => {
         const isSelected = btn.index === activeIndex;
+        const isHovered = btn.index === hoveredIndex;
+        const isHighlighted = isSelected || isHovered;
+
+        const yellowColor = isHovered ? "#B8960C" : "#FFDE00";
+        const glowColor = isHovered ? "rgba(184, 150, 12, 0.4)" : "rgba(255, 222, 0, 0.8)";
 
         ctx.save();
 
         const btnGradient = ctx.createLinearGradient(btn.x, btn.y, btn.x, btn.y + btn.height);
-        if (isSelected) {
+        if (isHighlighted) {
             btnGradient.addColorStop(0, "#103982");
             btnGradient.addColorStop(1, "#071e4d");
         } else {
@@ -110,10 +143,10 @@ export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex()) {
         drawRoundedRect(ctx, btn.x, btn.y, btn.width, btn.height, 8);
         ctx.fill();
 
-        if (isSelected) {
-            ctx.shadowColor = "#FFDE00";
-            ctx.shadowBlur = 14;
-            ctx.strokeStyle = "#FFDE00";
+        if (isHighlighted) {
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = isHovered ? 8 : 14;
+            ctx.strokeStyle = yellowColor;
             ctx.lineWidth = 3.5;
         } else {
             ctx.strokeStyle = "#1e4c9c";
@@ -126,12 +159,12 @@ export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex()) {
         ctx.font = "bold 16px 'Press Start 2P', monospace, sans-serif";
         ctx.textBaseline = "middle";
 
-        if (isSelected) {
+        if (isHighlighted) {
             const arrowX = btn.x + 22 + arrowBob;
             const arrowY = btn.y + btn.height / 2;
             const arrowSize = 10;
 
-            ctx.fillStyle = "#FFDE00";
+            ctx.fillStyle = yellowColor;
             ctx.beginPath();
             ctx.moveTo(arrowX, arrowY - arrowSize);
             ctx.lineTo(arrowX + arrowSize * 1.2, arrowY);
@@ -139,7 +172,7 @@ export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex()) {
             ctx.closePath();
             ctx.fill();
 
-            ctx.fillStyle = "#FFDE00";
+            ctx.fillStyle = yellowColor;
             ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
             ctx.shadowOffsetX = 2;
             ctx.shadowOffsetY = 2;
@@ -164,10 +197,11 @@ export function drawMainMenu(ctx, canvas, activeIndex = getSelectedIndex()) {
 }
 
 export function getStageSelectCardBounds(canvas) {
-    const cardWidth = Math.min(260, canvas.width * 0.28);
-    const cardHeight = cardWidth * 0.75 + 70;
-    const gap = 24;
-    const totalWidth = STAGES.length * cardWidth + (STAGES.length - 1) * gap;
+    const totalStages = STAGES.length;
+    const cardWidth = Math.min(230, (canvas.width - (totalStages + 1) * 20) / totalStages);
+    const cardHeight = cardWidth * 0.72 + 65;
+    const gap = 18;
+    const totalWidth = totalStages * cardWidth + (totalStages - 1) * gap;
     const startX = (canvas.width - totalWidth) / 2;
     const startY = (canvas.height - cardHeight) / 2 + 20;
 
@@ -183,7 +217,7 @@ export function getStageSelectCardBounds(canvas) {
     }));
 }
 
-export function drawBackgroundSelect(ctx, canvas, activeIndex = getCurrentStageIndex()) {
+export function drawBackgroundSelect(ctx, canvas, activeIndex = getCurrentStageIndex(), hoveredIndex = -1) {
     const currentImg = getStageImage(STAGES[activeIndex].id);
     if (currentImg && currentImg.complete) {
         ctx.drawImage(currentImg, 0, 0, canvas.width, canvas.height);
@@ -204,18 +238,23 @@ export function drawBackgroundSelect(ctx, canvas, activeIndex = getCurrentStageI
     const cards = getStageSelectCardBounds(canvas);
     cards.forEach(card => {
         const isSelected = card.index === activeIndex;
+        const isHovered = card.index === hoveredIndex;
+        const isHighlighted = isSelected || isHovered;
+
+        const yellowColor = isHovered ? "#B8960C" : "#FFDE00";
+        const glowColor = isHovered ? "rgba(184, 150, 12, 0.4)" : "rgba(255, 222, 0, 0.8)";
         const img = getStageImage(card.id);
 
         ctx.save();
 
-        ctx.fillStyle = isSelected ? "#0f2c66" : "#081636";
+        ctx.fillStyle = isHighlighted ? "#0f2c66" : "#081636";
         drawRoundedRect(ctx, card.x, card.y, card.width, card.height, 8);
         ctx.fill();
 
-        if (isSelected) {
-            ctx.strokeStyle = "#FFDE00";
-            ctx.shadowColor = "#FFDE00";
-            ctx.shadowBlur = 16;
+        if (isHighlighted) {
+            ctx.strokeStyle = yellowColor;
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = isHovered ? 8 : 16;
             ctx.lineWidth = 4;
         } else {
             ctx.strokeStyle = "#1d4484";
@@ -238,11 +277,11 @@ export function drawBackgroundSelect(ctx, canvas, activeIndex = getCurrentStageI
         }
 
         ctx.save();
-        ctx.font = "bold 11px 'Press Start 2P', monospace, sans-serif";
+        ctx.font = "bold 10px 'Press Start 2P', monospace, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = isSelected ? "#FFDE00" : "#FFFFFF";
-        ctx.fillText(card.name, card.x + card.width / 2, card.y + thumbH + 40);
+        ctx.fillStyle = isHighlighted ? yellowColor : "#FFFFFF";
+        ctx.fillText(card.name, card.x + card.width / 2, card.y + thumbH + 36);
         ctx.restore();
     });
 
@@ -251,6 +290,146 @@ export function drawBackgroundSelect(ctx, canvas, activeIndex = getCurrentStageI
     ctx.font = "11px 'Press Start 2P', monospace, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("[← / →] Choose Stage   •   [ENTER] Confirm   •   [ESC] Back", canvas.width / 2, canvas.height - 40);
+    ctx.restore();
+}
+
+export function getCharacterSelectCardBounds(canvas) {
+    const cardWidth = Math.min(280, canvas.width * 0.36);
+    const cardHeight = Math.min(420, canvas.height * 0.62);
+    const gap = 36;
+    const totalWidth = CHARACTERS.length * cardWidth + (CHARACTERS.length - 1) * gap;
+    const startX = (canvas.width - totalWidth) / 2;
+    const startY = (canvas.height - cardHeight) / 2 + 25;
+
+    return CHARACTERS.map((char, index) => ({
+        index,
+        id: char.id,
+        name: char.name,
+        fighterName: char.fighterName,
+        src: char.src,
+        x: startX + index * (cardWidth + gap),
+        y: startY,
+        width: cardWidth,
+        height: cardHeight
+    }));
+}
+
+export function drawCharacterSelect(ctx, canvas, activeIndex = getSelectedCharacterIndex(), hoveredIndex = -1) {
+    const currentImg = getStageImage(STAGES[getCurrentStageIndex()].id);
+    if (currentImg && currentImg.complete) {
+        ctx.drawImage(currentImg, 0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.fillStyle = "rgba(4, 8, 24, 0.88)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.font = "bold 28px 'Press Start 2P', monospace, sans-serif";
+    ctx.fillStyle = "#FFDE00";
+    ctx.shadowColor = "#FF5500";
+    ctx.shadowBlur = 15;
+    ctx.textAlign = "center";
+    ctx.fillText("CHARACTER SELECT", canvas.width / 2, canvas.height * 0.14);
+    ctx.restore();
+
+    const time = Date.now();
+    const arrowBob = Math.sin(time / 160) * 3;
+
+    const cards = getCharacterSelectCardBounds(canvas);
+    cards.forEach(card => {
+        const isSelected = card.index === activeIndex;
+        const isHovered = card.index === hoveredIndex;
+        const isHighlighted = isSelected || isHovered;
+
+        const yellowColor = isHovered ? "#B8960C" : "#FFDE00";
+        const glowColor = isHovered ? "rgba(184, 150, 12, 0.4)" : "rgba(255, 222, 0, 0.8)";
+        const img = characterImages[card.id];
+
+        ctx.save();
+        ctx.fillStyle = isHighlighted ? "#0e2c66" : "#081636";
+        drawRoundedRect(ctx, card.x, card.y, card.width, card.height, 10);
+        ctx.fill();
+
+        if (isHighlighted) {
+            ctx.strokeStyle = yellowColor;
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = isHovered ? 8 : 16;
+            ctx.lineWidth = 4;
+        } else {
+            ctx.strokeStyle = "#1e488f";
+            ctx.lineWidth = 2;
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        const imgPad = 12;
+        const imgX = card.x + imgPad;
+        const imgY = card.y + imgPad;
+        const imgW = card.width - imgPad * 2;
+        const imgH = card.height - 85;
+
+        ctx.save();
+        ctx.fillStyle = "#FFFFFF";
+        drawRoundedRect(ctx, imgX, imgY, imgW, imgH, 6);
+        ctx.fill();
+
+        ctx.strokeStyle = isHighlighted ? "rgba(255, 222, 0, 0.4)" : "rgba(255, 255, 255, 0.2)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+
+        if (img && img.complete && img.naturalWidth > 0) {
+            ctx.save();
+            drawRoundedRect(ctx, imgX, imgY, imgW, imgH, 6);
+            ctx.clip();
+
+            const scale = Math.min((imgW - 14) / img.naturalWidth, (imgH - 14) / img.naturalHeight);
+            const drawW = img.naturalWidth * scale;
+            const drawH = img.naturalHeight * scale;
+            const drawX = imgX + (imgW - drawW) / 2;
+            const drawY = imgY + (imgH - drawH) / 2;
+
+            ctx.drawImage(img, drawX, drawY, drawW, drawH);
+            ctx.restore();
+        }
+
+        ctx.save();
+        ctx.font = "bold 13px 'Press Start 2P', monospace, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = isHighlighted ? yellowColor : "#FFFFFF";
+        ctx.shadowColor = "rgba(0,0,0,0.8)";
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(card.name, card.x + card.width / 2, card.y + card.height - 52);
+
+        ctx.font = "bold 11px 'Press Start 2P', monospace, sans-serif";
+        ctx.fillStyle = isHighlighted ? "#FFFFFF" : "#8899aa";
+        ctx.fillText(card.fighterName, card.x + card.width / 2, card.y + card.height - 24);
+        ctx.restore();
+
+        if (isHighlighted) {
+            ctx.save();
+            const arrowX = card.x + card.width / 2;
+            const arrowY = card.y - 14 + arrowBob;
+            const arrowSize = 9;
+
+            ctx.fillStyle = yellowColor;
+            ctx.beginPath();
+            ctx.moveTo(arrowX - arrowSize, arrowY - arrowSize);
+            ctx.lineTo(arrowX + arrowSize, arrowY - arrowSize);
+            ctx.lineTo(arrowX, arrowY + arrowSize * 0.8);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+    });
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.font = "11px 'Press Start 2P', monospace, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("[← / →] Choose Fighter   •   [ENTER] Fight   •   [ESC] Back", canvas.width / 2, canvas.height - 35);
     ctx.restore();
 }
 
@@ -277,13 +456,16 @@ export function drawUI(ctx, canvas, character1, character2, timer, player1Wins, 
     ctx.strokeRect(p1X, barY, barWidth, barHeight);
     ctx.strokeRect(p2X, barY, barWidth, barHeight);
 
+    const p1Char = CHARACTERS[selectedCharacterIndex] || CHARACTERS[0];
+    const p2Char = CHARACTERS.find((_, i) => i !== selectedCharacterIndex) || CHARACTERS[1] || CHARACTERS[0];
+
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "bold 14px 'Press Start 2P', monospace, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("PLAYER 1", p1X, barY - 12);
+    ctx.fillText(p1Char.name, p1X, barY - 12);
 
     ctx.textAlign = "right";
-    ctx.fillText("PLAYER 2", p2X + barWidth, barY - 12);
+    ctx.fillText(p2Char.name, p2X + barWidth, barY - 12);
 
     ctx.save();
     ctx.font = "bold 34px 'Press Start 2P', monospace, sans-serif";

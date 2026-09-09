@@ -1,7 +1,7 @@
-import { drawUI, drawMainMenu, drawBackgroundSelect, getMenuButtonBounds, getStageSelectCardBounds } from "./render/ui.js";
+import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
 import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
-import { updateSFX, playRoundStart, playWin, playMenuMove, playMenuSelect } from "./render/sfx.js";
+import { updateSFX, playRoundStart, playWin } from "./render/sfx.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -27,16 +27,20 @@ let player2Wins = 0;
 let result = null;
 let testTimer = 99;
 
+let hoveredMenuIndex = -1;
+let hoveredStageIndex = -1;
+let hoveredCharIndex = -1;
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const scene = getCurrentScene();
 
     if (scene === "menu") {
-        drawMainMenu(ctx, canvas, getSelectedIndex());
+        drawMainMenu(ctx, canvas, getSelectedIndex(), hoveredMenuIndex);
     } else if (scene === "background-select") {
-        drawBackgroundSelect(ctx, canvas, getCurrentStageIndex());
+        drawBackgroundSelect(ctx, canvas, getCurrentStageIndex(), hoveredStageIndex);
     } else if (scene === "character-select") {
-        drawCharacterSelect();
+        drawCharacterSelect(ctx, canvas, getSelectedCharacterIndex(), hoveredCharIndex);
     } else if (scene === "fight") {
         drawBackground(ctx, canvas);
         updateSFX(character1, character2);
@@ -50,7 +54,6 @@ function gameLoop() {
 
 function executeMenuOption(index) {
     const item = MENU_ITEMS[index];
-    playMenuSelect();
 
     if (item.id === "start") {
         character1.health = 100;
@@ -63,37 +66,6 @@ function executeMenuOption(index) {
     } else if (item.id === "background-select") {
         goTo("background-select");
     }
-}
-
-function drawCharacterSelect() {
-    drawBackground(ctx, canvas);
-
-    ctx.fillStyle = "rgba(4, 8, 24, 0.88)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.save();
-    ctx.fillStyle = "#FFDE00";
-    ctx.shadowColor = "#FF5500";
-    ctx.shadowBlur = 15;
-    ctx.textAlign = "center";
-    ctx.font = "bold 28px 'Press Start 2P', monospace, sans-serif";
-    ctx.fillText("CHARACTER SELECT", canvas.width / 2, canvas.height * 0.25);
-    ctx.restore();
-
-    ctx.save();
-    ctx.fillStyle = "#FFFFFF";
-    ctx.textAlign = "center";
-    ctx.font = "14px 'Press Start 2P', monospace, sans-serif";
-    ctx.fillText("RYU  vs  KEN", canvas.width / 2, canvas.height * 0.48);
-
-    ctx.fillStyle = "#FFDE00";
-    ctx.font = "12px 'Press Start 2P', monospace, sans-serif";
-    ctx.fillText("PRESS ENTER TO FIGHT", canvas.width / 2, canvas.height * 0.65);
-
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-    ctx.font = "10px 'Press Start 2P', monospace, sans-serif";
-    ctx.fillText("PRESS ESC TO RETURN TO MENU", canvas.width / 2, canvas.height - 30);
-    ctx.restore();
 }
 
 function drawResults() {
@@ -124,29 +96,29 @@ window.addEventListener("keydown", function(event) {
     if (scene === "menu") {
         if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
             moveSelection(-1);
-            playMenuMove();
         } else if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
             moveSelection(1);
-            playMenuMove();
         } else if (event.key === "Enter" || event.key === " ") {
             executeMenuOption(getSelectedIndex());
         }
     } else if (scene === "background-select") {
         if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
             setStageIndex((getCurrentStageIndex() - 1 + STAGES.length) % STAGES.length);
-            playMenuMove();
         } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
             setStageIndex((getCurrentStageIndex() + 1) % STAGES.length);
-            playMenuMove();
         } else if (event.key === "Enter" || event.key === " ") {
-            playMenuSelect();
             goTo("menu");
         } else if (event.key === "Escape") {
-            playMenuMove();
             goTo("menu");
         }
     } else if (scene === "character-select") {
-        if (event.key === "Enter" || event.key === " ") {
+        if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+            const nextIdx = (getSelectedCharacterIndex() - 1 + CHARACTERS.length) % CHARACTERS.length;
+            setSelectedCharacterIndex(nextIdx);
+        } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
+            const nextIdx = (getSelectedCharacterIndex() + 1) % CHARACTERS.length;
+            setSelectedCharacterIndex(nextIdx);
+        } else if (event.key === "Enter" || event.key === " ") {
             character1.health = 100;
             character2.health = 100;
             result = null;
@@ -186,49 +158,83 @@ canvas.addEventListener("mousemove", function(e) {
 
     if (scene === "menu") {
         const buttons = getMenuButtonBounds(canvas);
-        let hoveredIndex = -1;
+        let foundIndex = -1;
 
         for (const btn of buttons) {
             if (pos.x >= btn.x && pos.x <= btn.x + btn.width &&
                 pos.y >= btn.y && pos.y <= btn.y + btn.height) {
-                hoveredIndex = btn.index;
+                foundIndex = btn.index;
                 break;
             }
         }
 
-        if (hoveredIndex !== -1) {
+        hoveredMenuIndex = foundIndex;
+
+        if (foundIndex !== -1) {
             canvas.style.cursor = "pointer";
-            if (hoveredIndex !== getSelectedIndex()) {
-                setSelectedIndex(hoveredIndex);
-                playMenuMove();
+            if (foundIndex !== getSelectedIndex()) {
+                setSelectedIndex(foundIndex);
             }
         } else {
             canvas.style.cursor = "default";
         }
     } else if (scene === "background-select") {
         const cards = getStageSelectCardBounds(canvas);
-        let hoveredIndex = -1;
+        let foundIndex = -1;
 
         for (const card of cards) {
             if (pos.x >= card.x && pos.x <= card.x + card.width &&
                 pos.y >= card.y && pos.y <= card.y + card.height) {
-                hoveredIndex = card.index;
+                foundIndex = card.index;
                 break;
             }
         }
 
-        if (hoveredIndex !== -1) {
+        hoveredStageIndex = foundIndex;
+
+        if (foundIndex !== -1) {
             canvas.style.cursor = "pointer";
-            if (hoveredIndex !== getCurrentStageIndex()) {
-                setStageIndex(hoveredIndex);
-                playMenuMove();
+            if (foundIndex !== getCurrentStageIndex()) {
+                setStageIndex(foundIndex);
+            }
+        } else {
+            canvas.style.cursor = "default";
+        }
+    } else if (scene === "character-select") {
+        const cards = getCharacterSelectCardBounds(canvas);
+        let foundIndex = -1;
+
+        for (const card of cards) {
+            if (pos.x >= card.x && pos.x <= card.x + card.width &&
+                pos.y >= card.y && pos.y <= card.y + card.height) {
+                foundIndex = card.index;
+                break;
+            }
+        }
+
+        hoveredCharIndex = foundIndex;
+
+        if (foundIndex !== -1) {
+            canvas.style.cursor = "pointer";
+            if (foundIndex !== getSelectedCharacterIndex()) {
+                setSelectedCharacterIndex(foundIndex);
             }
         } else {
             canvas.style.cursor = "default";
         }
     } else {
         canvas.style.cursor = "default";
+        hoveredMenuIndex = -1;
+        hoveredStageIndex = -1;
+        hoveredCharIndex = -1;
     }
+});
+
+canvas.addEventListener("mouseleave", function() {
+    hoveredMenuIndex = -1;
+    hoveredStageIndex = -1;
+    hoveredCharIndex = -1;
+    canvas.style.cursor = "default";
 });
 
 canvas.addEventListener("click", function(e) {
@@ -251,8 +257,21 @@ canvas.addEventListener("click", function(e) {
             if (pos.x >= card.x && pos.x <= card.x + card.width &&
                 pos.y >= card.y && pos.y <= card.y + card.height) {
                 setStageIndex(card.index);
-                playMenuSelect();
                 goTo("menu");
+                break;
+            }
+        }
+    } else if (scene === "character-select") {
+        const cards = getCharacterSelectCardBounds(canvas);
+        for (const card of cards) {
+            if (pos.x >= card.x && pos.x <= card.x + card.width &&
+                pos.y >= card.y && pos.y <= card.y + card.height) {
+                setSelectedCharacterIndex(card.index);
+                playRoundStart();
+                character1.health = 100;
+                character2.health = 100;
+                result = null;
+                goTo("fight");
                 break;
             }
         }
