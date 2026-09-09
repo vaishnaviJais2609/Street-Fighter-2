@@ -65,4 +65,32 @@ function drawCharacterSelect() {
     ctx.fillText("Press ENTER to Fight", canvas.width / 2, canvas.height / 2);
     ctx.textAlign = "left";
 }
+function drawResults() {
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "yellow";
+    ctx.textAlign = "center";
+    ctx.font = "45px Arial";
+    ctx.fillText(result || "RESULTS", canvas.width / 2, canvas.height / 2);
+    ctx.font = "22px Arial";
+    ctx.fillText("Press ENTER to Rematch", canvas.width / 2, canvas.height / 2 + 60);
+    ctx.textAlign = "left";
+}
+
+window.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        const scene = getCurrentScene();
+
+        if (scene === "menu") {
+            goTo("character-select");
+        } else if (scene === "character-select") {
+            goTo("fight");
+        } else if (scene === "results") {
+            character1.health = 100;
+            character2.health = 100;
+            result = null;
+            goTo("fight");
+        }
+    }
+});
 gameLoop();
