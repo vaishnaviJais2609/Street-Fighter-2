@@ -1,9 +1,11 @@
 import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
-import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex } from "./render/stage.js";
+import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex, getFloorY } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
 import { updateSFX, playRoundStart, playWin } from "./render/sfx.js";
 window.getCurrentScene = getCurrentScene;
+window.getFloorY = getFloorY;
 const canvas = document.getElementById("gameCanvas");
+window.canvas = canvas;
 const ctx = canvas.getContext("2d");
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -269,9 +271,10 @@ class Fighter {
         if (this.x < 0) this.x = 0;
         if (this.x > canvas.width - this.width) this.x = canvas.width - this.width;
         this.y += this.velocityY;
-        if (this.y + this.height + this.velocityY >= canvas.height) {
+        const floorY = getFloorY(canvas);
+        if (this.y + this.height + this.velocityY >= floorY) {
             this.velocityY = 0;
-            this.y = canvas.height - this.height;
+            this.y = floorY - this.height;
         } else {
             this.velocityY += gravity;
         }
@@ -319,7 +322,7 @@ function gameLoop() {
                 }
 
                 // Handle ArrowUp for jump (combined with w)
-                if (!character1.isCrouching && (keys.w.pressed || keys.ArrowUp.pressed) && character1.y + character1.height >= canvas.height) {
+                if (!character1.isCrouching && (keys.w.pressed || keys.ArrowUp.pressed) && character1.y + character1.height >= getFloorY(canvas)) {
                     character1.velocityY = -15;
                 }
             }

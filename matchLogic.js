@@ -1,14 +1,16 @@
 function updateAI(p1, p2) {
     if (p2.aiDecisionTimer > 0) {
         p2.aiDecisionTimer--;
-        if (p2.y + p2.height < 600 && p2.velocityY !== 0) return; 
+        const floorY = (window.getFloorY && window.canvas) ? window.getFloorY(window.canvas) : 600;
+        if (p2.y + p2.height < floorY - 50 && p2.velocityY !== 0) return; 
     }
     if (window.projectiles) {
         for (let i = 0; i < window.projectiles.length; i++) {
             const proj = window.projectiles[i];
             if (proj.state !== 'fireball_impact' && proj.facing !== p2.facing) {
                 let distToProj = Math.abs(proj.x - p2.x);
-                if (distToProj < 200 && p2.y + p2.height >= 550) {
+                const floorY = (window.getFloorY && window.canvas) ? window.getFloorY(window.canvas) : 600;
+                if (distToProj < 200 && p2.y + p2.height >= floorY - 50) {
                     p2.velocityY = -15;
                     p2.aiDecisionTimer = 40; 
                     return;
