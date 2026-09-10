@@ -111,7 +111,7 @@ function decreaseTimer(p1, p2) {
     if (timer > 0) {
         timerId = setTimeout(() => decreaseTimer(p1, p2), 1000);
         timer--;
-        window.timer = timer; // Expose to UI
+        window.timer = timer; 
     }
     if (timer === 0) {
         if (p1.health === p2.health) {

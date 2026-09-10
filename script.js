@@ -13,6 +13,13 @@ function resizeCanvas() {
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
+
+const p2WinImg = new Image();
+p2WinImg.src = "assets/WhatsApp Image 2026-09-10 at 2.37.12 PM.jpeg";
+
+const p1WinImg = new Image();
+p1WinImg.src = "assets/WhatsApp Image 2026-09-10 at 2.37.40 PM.jpeg";
+
 const gravity = 0.7;
 const FRAME_DELAY = 5;
 class Projectile {
@@ -238,6 +245,7 @@ class Fighter {
     attackNew() {
         if (this.isAttacking) return;
         this.isAttacking = true;
+        this.hasHit = false;
         this.frameIndex = 0;
         this.frameTimer = 0;
         const newPunches = ['punch2', 'punch3'];
@@ -327,8 +335,8 @@ function gameLoop() {
         if (!window.matchResult) {
             if (typeof keys !== 'undefined') {
                 if (window.isMultiplayer) {
-                    // Multiplayer controls
-                    // Player 1 controls (A, D, W, S)
+                    
+                    
                     let p1MovingLeft = keys.a.pressed;
                     let p1MovingRight = keys.d.pressed;
                     character1.isCrouching = keys.s.pressed;
@@ -347,10 +355,10 @@ function gameLoop() {
                         character1.velocityY = -15;
                     }
 
-                    // Player 2 controls (Arrow keys)
+                    
                     let p2MovingLeft = keys.ArrowLeft.pressed;
                     let p2MovingRight = keys.ArrowRight.pressed;
-                    character2.isCrouching = false; // ArrowDown is used for special attack now
+                    character2.isCrouching = false; 
 
                     if (p2MovingLeft) {
                         character2.velocityX = -character2.speed;
@@ -366,7 +374,7 @@ function gameLoop() {
                         character2.velocityY = -15;
                     }
                 } else {
-                    // Single player controls
+                    
                     let movingLeft = keys.a.pressed || keys.ArrowLeft.pressed;
                     let movingRight = keys.d.pressed || keys.ArrowRight.pressed;
                     
@@ -395,7 +403,7 @@ function gameLoop() {
                     character2.facing = 1;
                 }
             } else if (window.isMultiplayer) {
-                // Ensure correct facing in multiplayer
+                
                 if (character1.x < character2.x) {
                     character1.facing = 1;
                     character2.facing = -1;
@@ -450,7 +458,7 @@ function gameLoop() {
                     }
                     goTo("results");
                 } else {
-                    // Advance to next round
+                    
                     window.currentRound++;
                     resetFight(false);
                 }
@@ -527,18 +535,61 @@ function executeMenuOption(index) {
     }
 }
 function drawResults() {
-    ctx.fillStyle = "#0c1024";
+    
+    drawBackground(ctx, canvas);
+    
+    let currentTimer = typeof timer !== 'undefined' ? timer : 99;
+   
+    drawUI(ctx, canvas, character1, character2, currentTimer, player1Wins, player2Wins, null);
+
+   
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.save();
     ctx.fillStyle = "#FFDE00";
     ctx.shadowColor = "#FF3300";
     ctx.shadowBlur = 20;
     ctx.textAlign = "center";
     ctx.font = "bold 36px 'Press Start 2P', monospace, sans-serif";
-    ctx.fillText(result || "K.O. - RESULTS", canvas.width / 2, canvas.height / 2 - 20);
+    
+    
+    let textY = canvas.height / 2 + 20;
+    ctx.fillText(result || "K.O. - RESULTS", canvas.width / 2, textY);
+    
+    if (result === "PLAYER 2 WINS THE MATCH" && p2WinImg.complete) {
+        let imgWidth = 260; 
+        let imgHeight = (p2WinImg.height / p2WinImg.width) * imgWidth;
+        
+        let imgY = canvas.height / 2 - imgHeight - 60;
+        
+        if (imgY < 30) {
+            imgY = 30;
+            imgHeight = (canvas.height / 2 - 60) - 30;
+            imgWidth = (p2WinImg.width / p2WinImg.height) * imgHeight;
+        }
+        
+        ctx.shadowBlur = 0; 
+        ctx.drawImage(p2WinImg, canvas.width / 2 - imgWidth / 2, imgY, imgWidth, imgHeight);
+    } else if (result === "PLAYER 1 WINS THE MATCH" && p1WinImg.complete) {
+        let imgWidth = 260; 
+        let imgHeight = (p1WinImg.height / p1WinImg.width) * imgWidth;
+        
+        let imgY = canvas.height / 2 - imgHeight - 60;
+        
+        if (imgY < 30) {
+            imgY = 30;
+            imgHeight = (canvas.height / 2 - 60) - 30;
+            imgWidth = (p1WinImg.width / p1WinImg.height) * imgHeight;
+        }
+        
+        ctx.shadowBlur = 0; 
+        ctx.drawImage(p1WinImg, canvas.width / 2 - imgWidth / 2, imgY, imgWidth, imgHeight);
+    }
+    
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "14px 'Press Start 2P', monospace, sans-serif";
-    ctx.fillText("PRESS ENTER TO REMATCH", canvas.width / 2, canvas.height / 2 + 50);
+    ctx.fillText("PRESS ENTER TO REMATCH", canvas.width / 2, textY + 60);
     ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
     ctx.font = "10px 'Press Start 2P', monospace, sans-serif";
     ctx.fillText("PRESS ESC FOR MAIN MENU", canvas.width / 2, canvas.height - 30);

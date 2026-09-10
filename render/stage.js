@@ -56,7 +56,7 @@ export function drawBackground(ctx, canvas) {
 export function drawRoundBanner(ctx, canvas, roundNumber) {
     const img = bannerImages[roundNumber];
     if (img && img.complete && img.naturalWidth > 0) {
-        const scale = 0.35; // slightly smaller size
+        const scale = 0.35; 
         const w = img.naturalWidth * scale;
         const h = img.naturalHeight * scale;
         const x = (canvas.width - w) / 2;
