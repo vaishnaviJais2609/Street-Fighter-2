@@ -75,6 +75,10 @@ class Projectile {
         }
     }
     update() {
+        if (!this.animations[this.state]) {
+            this.markedForDeletion = true;
+            return;
+        }
         this.draw();
         if (this.state !== 'fireball_impact') {
             this.x += this.velocity.x;
@@ -222,17 +226,21 @@ class Fighter {
         this.isAttacking = true;
         this.hasHit = false;
         
-        // Only use punch2 and punch3 if this is the AI (not player1)
-        if (typeof window.player1 !== 'undefined' && this !== window.player1) {
+        if (this === window.player2 && !window.isMultiplayer) {
             const punches = ['punch', 'punch2', 'punch3'];
             this.state = punches[Math.floor(Math.random() * punches.length)]; 
         } else {
             this.state = 'punch';
         }
-        
+    }
+    attackNew() {
+        if (this.isAttacking) return;
+        this.isAttacking = true;
         this.frameIndex = 0;
         this.frameTimer = 0;
-    }
+        const newPunches = ['punch2', 'punch3'];
+        this.state = newPunches[Math.floor(Math.random() * newPunches.length)];
+    }    
     kick() {
         if (this.isAttacking && this.state !== 'punch') return;
         this.isAttacking = true;
@@ -313,31 +321,81 @@ function gameLoop() {
         character1.velocityX = 0;
         if (!window.matchResult) {
             if (typeof keys !== 'undefined') {
-                let movingLeft = keys.a.pressed || keys.Home.pressed || keys.ArrowLeft.pressed;
-                let movingRight = keys.d.pressed || keys.End.pressed || keys.ArrowRight.pressed;
-                
-                character1.isCrouching = keys.ArrowDown.pressed;
+                if (window.isMultiplayer) {
+                    // Multiplayer controls
+                    // Player 1 controls (A, D, W, S)
+                    let p1MovingLeft = keys.a.pressed;
+                    let p1MovingRight = keys.d.pressed;
+                    character1.isCrouching = keys.s.pressed;
 
-                if (character1.isCrouching) {
-                    character1.velocityX = 0;
-                } else if (movingLeft) {
-                    character1.velocityX = -character1.speed;
-                    character1.facing = -1;
-                } else if (movingRight) {
-                    character1.velocityX = character1.speed;
-                    character1.facing = 1;
-                }
+                    if (character1.isCrouching) {
+                        character1.velocityX = 0;
+                    } else if (p1MovingLeft) {
+                        character1.velocityX = -character1.speed;
+                        character1.facing = -1;
+                    } else if (p1MovingRight) {
+                        character1.velocityX = character1.speed;
+                        character1.facing = 1;
+                    }
 
-                // Handle ArrowUp for jump (combined with w)
-                if (!character1.isCrouching && (keys.w.pressed || keys.ArrowUp.pressed) && character1.y + character1.height >= getFloorY(canvas)) {
-                    character1.velocityY = -15;
+                    if (!character1.isCrouching && keys.w.pressed && character1.y + character1.height >= getFloorY(canvas)) {
+                        character1.velocityY = -15;
+                    }
+
+                    // Player 2 controls (Arrow keys)
+                    let p2MovingLeft = keys.ArrowLeft.pressed;
+                    let p2MovingRight = keys.ArrowRight.pressed;
+                    character2.isCrouching = false; // ArrowDown is used for special attack now
+
+                    if (p2MovingLeft) {
+                        character2.velocityX = -character2.speed;
+                        character2.facing = -1;
+                    } else if (p2MovingRight) {
+                        character2.velocityX = character2.speed;
+                        character2.facing = 1;
+                    } else {
+                        character2.velocityX = 0;
+                    }
+
+                    if (!character2.isCrouching && keys.ArrowUp.pressed && character2.y + character2.height >= getFloorY(canvas)) {
+                        character2.velocityY = -15;
+                    }
+                } else {
+                    // Single player controls
+                    let movingLeft = keys.a.pressed || keys.ArrowLeft.pressed;
+                    let movingRight = keys.d.pressed || keys.ArrowRight.pressed;
+                    
+                    character1.isCrouching = keys.s.pressed || keys.ArrowDown.pressed;
+
+                    if (character1.isCrouching) {
+                        character1.velocityX = 0;
+                    } else if (movingLeft) {
+                        character1.velocityX = -character1.speed;
+                        character1.facing = -1;
+                    } else if (movingRight) {
+                        character1.velocityX = character1.speed;
+                        character1.facing = 1;
+                    }
+
+                    if (!character1.isCrouching && (keys.w.pressed || keys.ArrowUp.pressed) && character1.y + character1.height >= getFloorY(canvas)) {
+                        character1.velocityY = -15;
+                    }
                 }
             }
-            if (typeof updateAI === 'function') {
+            if (!window.isMultiplayer && typeof updateAI === 'function') {
                 updateAI(character1, character2);
                 if (character1.x < character2.x) {
                     character2.facing = -1;
                 } else {
+                    character2.facing = 1;
+                }
+            } else if (window.isMultiplayer) {
+                // Ensure correct facing in multiplayer
+                if (character1.x < character2.x) {
+                    character1.facing = 1;
+                    character2.facing = -1;
+                } else {
+                    character1.facing = -1;
                     character2.facing = 1;
                 }
             }

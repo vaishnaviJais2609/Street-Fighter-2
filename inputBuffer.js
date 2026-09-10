@@ -2,7 +2,10 @@ const keys = {
     a: { pressed: false },
     d: { pressed: false },
     w: { pressed: false },
+    s: { pressed: false },
+    e: { pressed: false },
     ' ': { pressed: false },
+    '/': { pressed: false },
     ArrowUp: { pressed: false },
     ArrowDown: { pressed: false },
     ArrowLeft: { pressed: false },
@@ -13,15 +16,18 @@ const keys = {
 };
 
 let lastSpacePressTime = 0;
+let lastSlashPressTime = 0;
 
 window.addEventListener('keydown', (event) => {
     if (keys[event.key]) {
         keys[event.key].pressed = true;
         // Prevent default browser behavior (scrolling/focus) for game keys
-        if ([' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+        if ([' ', '/', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
             event.preventDefault();
         }
     }
+    
+    // Player 1 Attack (Space)
     if (event.key === ' ' && typeof window.player1 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult) {
         const currentTime = Date.now();
         if (currentTime - lastSpacePressTime < 300) {
@@ -31,8 +37,26 @@ window.addEventListener('keydown', (event) => {
         }
         lastSpacePressTime = currentTime;
     }
-    if ((event.key === 'e' || event.key === 'Shift') && typeof window.player1 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult) {
+    
+    // Player 2 Attack (/)
+    if (event.key === '/' && typeof window.player2 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult && window.isMultiplayer) {
+        const currentTime = Date.now();
+        if (currentTime - lastSlashPressTime < 300) {
+            window.player2.attackNew();
+        } else {
+            window.player2.attack();
+        }
+        lastSlashPressTime = currentTime;
+    }
+
+    // Player 1 Special (e)
+    if (event.key === 'e' && typeof window.player1 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult) {
         window.player1.specialMove();
+    }
+    
+    // Player 2 Special (ArrowDown)
+    if (event.key === 'ArrowDown' && typeof window.player2 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult && window.isMultiplayer) {
+        window.player2.specialMove();
     }
 });
 window.addEventListener('keyup', (event) => {
