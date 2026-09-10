@@ -287,6 +287,96 @@
                 "w": 35,
                 "h": 54
             }
+        },
+        "punch2_0": {
+            "frame": {
+                "x": 356,
+                "y": 127,
+                "w": 44,
+                "h": 81
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch2_1": {
+            "frame": {
+                "x": 411,
+                "y": 131,
+                "w": 37,
+                "h": 78
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch2_2": {
+            "frame": {
+                "x": 464,
+                "y": 131,
+                "w": 37,
+                "h": 78
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch2_3": {
+            "frame": {
+                "x": 515,
+                "y": 124,
+                "w": 40,
+                "h": 85
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch2_4": {
+            "frame": {
+                "x": 565,
+                "y": 131,
+                "w": 37,
+                "h": 78
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch3_0": {
+            "frame": {
+                "x": 616,
+                "y": 131,
+                "w": 37,
+                "h": 78
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch3_1": {
+            "frame": {
+                "x": 667,
+                "y": 127,
+                "w": 44,
+                "h": 81
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch3_2": {
+            "frame": {
+                "x": 724,
+                "y": 127,
+                "w": 52,
+                "h": 81
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch3_3": {
+            "frame": {
+                "x": 792,
+                "y": 128,
+                "w": 37,
+                "h": 80
+            },
+            "sheet": "preview_top.png"
+        },
+        "punch3_4": {
+            "frame": {
+                "x": 844,
+                "y": 127,
+                "w": 52,
+                "h": 81
+            },
+            "sheet": "preview_top.png"
         }
     }
 }

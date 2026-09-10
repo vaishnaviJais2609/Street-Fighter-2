@@ -186,7 +186,7 @@ class Fighter {
             ctx.restore();
             this.frameTimer++;
             if (this.frameTimer > FRAME_DELAY) {
-                if (this.state === 'punch' || this.state === 'kick' || this.state === 'special') {
+                if (this.state.startsWith('punch') || this.state === 'kick' || this.state === 'special') {
                     if (this.frameIndex < frames.length - 1) {
                         this.frameIndex++;
                     } else {
@@ -219,7 +219,15 @@ class Fighter {
         if (this.isAttacking) return;
         this.isAttacking = true;
         this.hasHit = false;
-        this.state = 'punch'; 
+        
+        // Only use punch2 and punch3 if this is the AI (not player1)
+        if (typeof window.player1 !== 'undefined' && this !== window.player1) {
+            const punches = ['punch', 'punch2', 'punch3'];
+            this.state = punches[Math.floor(Math.random() * punches.length)]; 
+        } else {
+            this.state = 'punch';
+        }
+        
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
