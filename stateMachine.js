@@ -19,6 +19,8 @@ function updateState(fighter) {
         fighter.state = 'jump';
     } else if (fighter.velocityY > 0) {
         fighter.state = 'fall';
+    } else if (fighter.isCrouching) {
+        fighter.state = 'crouch';
     } else if (fighter.velocityX !== 0) {
         if ((fighter.velocityX > 0 && fighter.facing === 1) || (fighter.velocityX < 0 && fighter.facing === -1)) {
             fighter.state = 'walk_forward';

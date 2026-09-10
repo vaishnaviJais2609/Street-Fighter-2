@@ -78,84 +78,48 @@
         },
         "kick_0": {
             "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
+                "x": 19,
+                "y": 481,
+                "w": 37,
+                "h": 79
             },
-            "sheet": "ryu-big-sheet.png"
+            "sheet": "character-sprites.png"
         },
         "kick_1": {
             "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
+                "x": 71,
+                "y": 480,
+                "w": 55,
+                "h": 80
             },
-            "sheet": "ryu-big-sheet.png"
+            "sheet": "character-sprites.png"
         },
         "kick_2": {
             "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
+                "x": 141,
+                "y": 480,
+                "w": 67,
+                "h": 80
             },
-            "sheet": "ryu-big-sheet.png"
+            "sheet": "character-sprites.png"
         },
         "kick_3": {
             "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
+                "x": 223,
+                "y": 480,
+                "w": 39,
+                "h": 80
             },
-            "sheet": "ryu-big-sheet.png"
+            "sheet": "character-sprites.png"
         },
         "kick_4": {
             "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
+                "x": 300,
+                "y": 481,
+                "w": 37,
+                "h": 79
             },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "kick_5": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "kick_6": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "kick_7": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "kick_8": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
+            "sheet": "character-sprites.png"
         },
         "highkick_0": {
             "frame": {
@@ -321,75 +285,12 @@
         },
         "crouch_0": {
             "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
+                "x": 17,
+                "y": 746,
+                "w": 35,
+                "h": 54
             },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_1": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_2": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_3": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_4": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_5": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_6": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
-        },
-        "crouch_7": {
-            "frame": {
-                "x": 5,
-                "y": 15,
-                "w": 34,
-                "h": 78
-            },
-            "sheet": "ryu-big-sheet.png"
+            "sheet": "character-sprites.png"
         },
         "knockdown_0": {
             "frame": {

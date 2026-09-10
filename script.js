@@ -223,6 +223,14 @@ class Fighter {
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
+    kick() {
+        if (this.isAttacking && this.state !== 'punch') return;
+        this.isAttacking = true;
+        this.hasHit = false;
+        this.state = 'kick'; 
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+    }
     specialMove() {
         if (this.isAttacking) return;
         if (window.projectiles) {
@@ -287,14 +295,23 @@ function gameLoop() {
         character1.velocityX = 0;
         if (!window.matchResult) {
             if (typeof keys !== 'undefined') {
-                if (keys.a.pressed) {
+                let movingLeft = keys.a.pressed || keys.Home.pressed || keys.ArrowLeft.pressed;
+                let movingRight = keys.d.pressed || keys.End.pressed || keys.ArrowRight.pressed;
+                
+                character1.isCrouching = keys.ArrowDown.pressed;
+
+                if (character1.isCrouching) {
+                    character1.velocityX = 0;
+                } else if (movingLeft) {
                     character1.velocityX = -character1.speed;
                     character1.facing = -1;
-                } else if (keys.d.pressed) {
+                } else if (movingRight) {
                     character1.velocityX = character1.speed;
                     character1.facing = 1;
                 }
-                if (keys.w.pressed && character1.y + character1.height >= canvas.height) {
+
+                // Handle ArrowUp for jump (combined with w)
+                if (!character1.isCrouching && (keys.w.pressed || keys.ArrowUp.pressed) && character1.y + character1.height >= canvas.height) {
                     character1.velocityY = -15;
                 }
             }
