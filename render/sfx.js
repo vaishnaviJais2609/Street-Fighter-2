@@ -6,6 +6,36 @@ const sounds = {
     roundStart: new Audio("assets/round-start.mp3"),
     win: new Audio("assets/win.mp3")
 };
+
+const roundMusicSrcs = [
+    "assets/bg2_music.wav",
+    "assets/bg2_music.wav",
+    "assets/bg2_music.wav"
+];
+
+let currentMusicTrack = null;
+
+export function playRoundMusic(round) {
+    if (currentMusicTrack) {
+        currentMusicTrack.pause();
+        currentMusicTrack.src = "";
+        currentMusicTrack = null;
+    }
+    const idx = (round - 1) % roundMusicSrcs.length;
+    currentMusicTrack = new Audio(roundMusicSrcs[idx]);
+    currentMusicTrack.loop = true;
+    currentMusicTrack.volume = 0.4;
+    currentMusicTrack.play().catch(() => {});
+}
+
+export function stopRoundMusic() {
+    if (currentMusicTrack) {
+        currentMusicTrack.pause();
+        currentMusicTrack.src = "";
+        currentMusicTrack = null;
+    }
+}
+
 let previousState1 = "";
 let previousState2 = "";
 function playSound(sound) {

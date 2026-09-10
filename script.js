@@ -1,7 +1,7 @@
 import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, drawInstructions, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
 import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex, getFloorY, drawRoundBanner } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
-import { updateSFX, playRoundStart, playWin } from "./render/sfx.js";
+import { updateSFX, playRoundStart, playWin, playRoundMusic, stopRoundMusic } from "./render/sfx.js";
 window.getCurrentScene = getCurrentScene;
 window.getFloorY = getFloorY;
 const canvas = document.getElementById("gameCanvas");
@@ -442,7 +442,7 @@ function gameLoop() {
                 }
                 
                 if (player1Wins >= 2 || player2Wins >= 2) {
-                    // Match is over
+                    stopRoundMusic();
                     if (player1Wins >= 2) {
                         result = "PLAYER 1 WINS THE MATCH";
                     } else {
@@ -498,6 +498,7 @@ function resetFight(hardReset = true) {
     
     setTimeout(() => {
         window.roundStarting = false;
+        playRoundMusic(window.currentRound);
         if (typeof decreaseTimer === 'function') decreaseTimer(character1, character2);
     }, 1200);
 
