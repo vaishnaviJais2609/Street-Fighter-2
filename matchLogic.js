@@ -1,14 +1,16 @@
 function updateAI(p1, p2) {
     if (p2.aiDecisionTimer > 0) {
         p2.aiDecisionTimer--;
-        if (p2.y + p2.height < 600 && p2.velocityY !== 0) return; 
+        const floorY = (window.getFloorY && window.canvas) ? window.getFloorY(window.canvas) : 600;
+        if (p2.y + p2.height < floorY - 50 && p2.velocityY !== 0) return; 
     }
     if (window.projectiles) {
         for (let i = 0; i < window.projectiles.length; i++) {
             const proj = window.projectiles[i];
             if (proj.state !== 'fireball_impact' && proj.facing !== p2.facing) {
                 let distToProj = Math.abs(proj.x - p2.x);
-                if (distToProj < 200 && p2.y + p2.height >= 550) {
+                const floorY = (window.getFloorY && window.canvas) ? window.getFloorY(window.canvas) : 600;
+                if (distToProj < 200 && p2.y + p2.height >= floorY - 50) {
                     p2.velocityY = -15;
                     p2.aiDecisionTimer = 40; 
                     return;
@@ -21,15 +23,18 @@ function updateAI(p1, p2) {
         let absDist = Math.abs(distance);
         let rand = Math.random();
         p2.velocityX = 0;
-        if (absDist < 120) {
-            if (rand < 0.7) {
+        if (absDist <= 95) {
+            if (rand < 0.6) {
                 p2.attack();
                 p2.aiDecisionTimer = 40;
+            } else if (rand < 0.8 && absDist < 60) {
+                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; 
+                p2.aiDecisionTimer = 15;
             } else {
                 p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; 
                 p2.aiDecisionTimer = 20;
             }
-        } else if (absDist >= 120 && absDist <= 350) {
+        } else if (absDist > 95 && absDist <= 350) {
             if (rand < 0.6) {
                 p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed; 
                 p2.aiDecisionTimer = 30;
@@ -54,15 +59,20 @@ function updateAI(p1, p2) {
 }
 function checkHits(p1, p2) {
     if (window.matchResult) return;
-    if (p1.isAttacking && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
-        p1.isAttacking = false;
-        p2.health -= 10;
-        if (p2.health < 0) p2.health = 0;
+    if (p1.isAttacking && !p1.hasHit && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
+        p1.hasHit = true;
+        if (!p2.isCrouching && p2.state !== 'crouch') {
+            p2.health -= 10;
+            if (p2.health < 0) p2.health = 0;
+        }
     }
-    if (p2.isAttacking && typeof detectCollision === 'function' && detectCollision(p2, p1)) {
-        p2.isAttacking = false;
-        p1.health -= 10;
-        if (p1.health < 0) p1.health = 0;
+
+    if (p2.isAttacking && !p2.hasHit && typeof detectCollision === 'function' && detectCollision(p2, p1)) {
+        p2.hasHit = true;
+        if (!p1.isCrouching && p1.state !== 'crouch') {
+            p1.health -= 10;
+            if (p1.health < 0) p1.health = 0;
+        }
     }
     if (window.projectiles && typeof detectProjectileCollision === 'function') {
         for (let i = 0; i < window.projectiles.length; i++) {
@@ -72,15 +82,19 @@ function checkHits(p1, p2) {
                     proj.state = 'fireball_impact';
                     proj.frameIndex = 0;
                     proj.velocity.x = 0;
-                    p2.health -= 15;
-                    if (p2.health < 0) p2.health = 0;
+                    if (!p2.isCrouching && p2.state !== 'crouch') {
+                        p2.health -= 15;
+                        if (p2.health < 0) p2.health = 0;
+                    }
                 }
                 else if (proj.owner !== p1 && detectProjectileCollision(proj, p1)) {
                     proj.state = 'fireball_impact';
                     proj.frameIndex = 0;
                     proj.velocity.x = 0;
-                    p1.health -= 15;
-                    if (p1.health < 0) p1.health = 0;
+                    if (!p1.isCrouching && p1.state !== 'crouch') {
+                        p1.health -= 15;
+                        if (p1.health < 0) p1.health = 0;
+                    }
                 }
             }
         }

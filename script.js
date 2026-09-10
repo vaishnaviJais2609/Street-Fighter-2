@@ -1,9 +1,11 @@
 import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, drawInstructions, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
-import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex } from "./render/stage.js";
+import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex, getFloorY } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
 import { updateSFX, playRoundStart, playWin } from "./render/sfx.js";
 window.getCurrentScene = getCurrentScene;
+window.getFloorY = getFloorY;
 const canvas = document.getElementById("gameCanvas");
+window.canvas = canvas;
 const ctx = canvas.getContext("2d");
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -97,6 +99,7 @@ class Fighter {
         this.state = 'idle';
         this.health = 100;
         this.isAttacking = false;
+        this.hasHit = false;
         this.attackBox = {
             x: this.x,
             y: this.y,
@@ -185,7 +188,7 @@ class Fighter {
             ctx.restore();
             this.frameTimer++;
             if (this.frameTimer > FRAME_DELAY) {
-                if (this.state === 'punch' || this.state === 'kick' || this.state === 'special') {
+                if (this.state.startsWith('punch') || this.state === 'kick' || this.state === 'special') {
                     if (this.frameIndex < frames.length - 1) {
                         this.frameIndex++;
                     } else {
@@ -217,7 +220,24 @@ class Fighter {
     attack() {
         if (this.isAttacking) return;
         this.isAttacking = true;
-        this.state = 'punch'; 
+        this.hasHit = false;
+        
+        // Only use punch2 and punch3 if this is the AI (not player1)
+        if (typeof window.player1 !== 'undefined' && this !== window.player1) {
+            const punches = ['punch', 'punch2', 'punch3'];
+            this.state = punches[Math.floor(Math.random() * punches.length)]; 
+        } else {
+            this.state = 'punch';
+        }
+        
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+    }
+    kick() {
+        if (this.isAttacking && this.state !== 'punch') return;
+        this.isAttacking = true;
+        this.hasHit = false;
+        this.state = 'kick'; 
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
@@ -231,6 +251,7 @@ class Fighter {
             }
         }
         this.isAttacking = true;
+        this.hasHit = false;
         this.state = 'special'; 
         this.frameIndex = 0;
         this.frameTimer = 0;
@@ -247,10 +268,13 @@ class Fighter {
         }
         this.draw();
         this.x += this.velocityX;
+        if (this.x < 0) this.x = 0;
+        if (this.x > canvas.width - this.width) this.x = canvas.width - this.width;
         this.y += this.velocityY;
-        if (this.y + this.height + this.velocityY >= canvas.height) {
+        const floorY = getFloorY(canvas);
+        if (this.y + this.height + this.velocityY >= floorY) {
             this.velocityY = 0;
-            this.y = canvas.height - this.height;
+            this.y = floorY - this.height;
         } else {
             this.velocityY += gravity;
         }
@@ -289,14 +313,23 @@ function gameLoop() {
         character1.velocityX = 0;
         if (!window.matchResult) {
             if (typeof keys !== 'undefined') {
-                if (keys.a.pressed) {
+                let movingLeft = keys.a.pressed || keys.Home.pressed || keys.ArrowLeft.pressed;
+                let movingRight = keys.d.pressed || keys.End.pressed || keys.ArrowRight.pressed;
+                
+                character1.isCrouching = keys.ArrowDown.pressed;
+
+                if (character1.isCrouching) {
+                    character1.velocityX = 0;
+                } else if (movingLeft) {
                     character1.velocityX = -character1.speed;
                     character1.facing = -1;
-                } else if (keys.d.pressed) {
+                } else if (movingRight) {
                     character1.velocityX = character1.speed;
                     character1.facing = 1;
                 }
-                if (keys.w.pressed && character1.y + character1.height >= canvas.height) {
+
+                // Handle ArrowUp for jump (combined with w)
+                if (!character1.isCrouching && (keys.w.pressed || keys.ArrowUp.pressed) && character1.y + character1.height >= getFloorY(canvas)) {
                     character1.velocityY = -15;
                 }
             }
@@ -311,6 +344,9 @@ function gameLoop() {
         }
         character1.update();
         character2.update();
+        if (typeof checkBodyCollision === 'function') {
+            checkBodyCollision(character1, character2, canvas.width);
+        }
         for (let i = window.projectiles.length - 1; i >= 0; i--) {
             const projectile = window.projectiles[i];
             projectile.update();

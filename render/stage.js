@@ -1,8 +1,8 @@
 export const STAGES = [
-    { id: "bg1", name: "SUZAKU CASTLE", src: "assets/bg1.jpeg" },
-    { id: "bg2", name: "GRAND MANSION", src: "assets/bg2.jpeg" },
-    { id: "bg3", name: "HONDA BATHHOUSE", src: "assets/bg3.jpeg" },
-    { id: "bg4", name: "TEMPLE DOJO", src: "assets/bg4.jpg" }
+    { id: "bg1", name: "SUZAKU CASTLE", src: "assets/bg1.jpeg", floorRatio: 0.85 },
+    { id: "bg2", name: "GRAND MANSION", src: "assets/bg2.jpeg", floorRatio: 0.95 },
+    { id: "bg3", name: "HONDA BATHHOUSE", src: "assets/bg3.jpeg", floorRatio: 0.90 },
+    { id: "bg4", name: "TEMPLE DOJO", src: "assets/bg4.jpg", floorRatio: 0.95 }
 ];
 export const stageImages = {};
 STAGES.forEach(stage => {
@@ -24,6 +24,10 @@ export function getCurrentStage() {
 }
 export function getStageImage(id) {
     return stageImages[id];
+}
+export function getFloorY(canvas) {
+    const stage = STAGES[currentStageIndex];
+    return canvas.height * (stage.floorRatio || 0.85);
 }
 export function drawBackground(ctx, canvas) {
     const stage = STAGES[currentStageIndex];
