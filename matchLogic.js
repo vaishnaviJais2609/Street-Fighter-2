@@ -23,6 +23,8 @@ function updateAI(p1, p2) {
         let absDist = Math.abs(distance);
         let rand = Math.random();
         p2.velocityX = 0;
+        if (p2.aiSpecialCooldown === undefined) p2.aiSpecialCooldown = 0;
+        if (p2.aiSpecialCooldown > 0) p2.aiSpecialCooldown--;
         if (absDist <= 95) {
             if (rand < 0.6) {
                 p2.attack();
@@ -35,21 +37,23 @@ function updateAI(p1, p2) {
                 p2.aiDecisionTimer = 20;
             }
         } else if (absDist > 95 && absDist <= 350) {
-            if (rand < 0.6) {
+            if (rand < 0.65) {
                 p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed; 
                 p2.aiDecisionTimer = 30;
-            } else if (rand < 0.9) {
+            } else if (rand < 0.85 && p2.aiSpecialCooldown <= 0) {
                 p2.specialMove();
-                p2.aiDecisionTimer = 60;
+                p2.aiDecisionTimer = 80;
+                p2.aiSpecialCooldown = 180;
             } else {
                 p2.velocityY = -15;
                 p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed;
                 p2.aiDecisionTimer = 50;
             }
         } else {
-            if (rand < 0.7) {
+            if (rand < 0.55 && p2.aiSpecialCooldown <= 0) {
                 p2.specialMove();
-                p2.aiDecisionTimer = 70;
+                p2.aiDecisionTimer = 100;
+                p2.aiSpecialCooldown = 180;
             } else {
                 p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed;
                 p2.aiDecisionTimer = 40;
