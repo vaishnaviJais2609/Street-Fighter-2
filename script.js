@@ -1,5 +1,5 @@
 import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, drawInstructions, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
-import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex, getFloorY } from "./render/stage.js";
+import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex, getFloorY, drawRoundBanner } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
 import { updateSFX, playRoundStart, playWin } from "./render/sfx.js";
 window.getCurrentScene = getCurrentScene;
@@ -190,7 +190,9 @@ class Fighter {
                 );
             }
             ctx.restore();
-            this.frameTimer++;
+            if (!window.roundStarting) {
+                this.frameTimer++;
+            }
             if (this.frameTimer > FRAME_DELAY) {
                 if (this.state.startsWith('punch') || this.state === 'kick' || this.state === 'special') {
                     if (this.frameIndex < frames.length - 1) {
@@ -295,6 +297,9 @@ window.player1 = character1;
 window.player2 = character2;
 let player1Wins = 0;
 let player2Wins = 0;
+window.currentRound = 1;
+window.roundEnding = false;
+window.roundStarting = false;
 let result = null;
 let testTimer = 99;
 let isMultiplayer = false;
@@ -400,27 +405,64 @@ function gameLoop() {
                 }
             }
         }
-        character1.update();
-        character2.update();
-        if (typeof checkBodyCollision === 'function') {
+        if (!window.roundEnding && !window.roundStarting) {
+            character1.update();
+            character2.update();
+        } else if (window.roundStarting) {
+            character1.draw();
+            character2.draw();
+        }
+
+        if (typeof checkBodyCollision === 'function' && !window.roundStarting) {
             checkBodyCollision(character1, character2, canvas.width);
         }
         for (let i = window.projectiles.length - 1; i >= 0; i--) {
             const projectile = window.projectiles[i];
-            projectile.update();
+            if (!window.roundStarting) projectile.update();
+            else projectile.draw();
             if (projectile.markedForDeletion) {
                 window.projectiles.splice(i, 1);
             }
         }
-        if (typeof checkHits === 'function') {
+        if (typeof checkHits === 'function' && !window.roundStarting) {
             checkHits(character1, character2);
         }
-        if (typeof determineWinner === 'function') {
+        if (typeof determineWinner === 'function' && !window.roundEnding && !window.roundStarting) {
             determineWinner(character1, character2);
+        }
+        
+        if (window.matchResult && !window.roundEnding) {
+            window.roundEnding = true;
+            
+            setTimeout(() => {
+                if (window.matchResult === 'Player 1 Wins') {
+                    player1Wins++;
+                } else if (window.matchResult === 'Player 2 Wins') {
+                    player2Wins++;
+                }
+                
+                if (player1Wins >= 2 || player2Wins >= 2) {
+                    // Match is over
+                    if (player1Wins >= 2) {
+                        result = "PLAYER 1 WINS THE MATCH";
+                    } else {
+                        result = "PLAYER 2 WINS THE MATCH";
+                    }
+                    goTo("results");
+                } else {
+                    // Advance to next round
+                    window.currentRound++;
+                    resetFight(false);
+                }
+            }, 2000);
         }
         updateSFX(character1, character2);
         let currentTimer = typeof timer !== 'undefined' ? timer : 99;
         drawUI(ctx, canvas, character1, character2, currentTimer, player1Wins, player2Wins, window.matchResult || result);
+
+        if (window.roundStarting) {
+            drawRoundBanner(ctx, canvas, window.currentRound);
+        }
     } else if (scene === "results") {
         drawResults();
     } else if (scene === "instructions") {
@@ -428,16 +470,22 @@ function gameLoop() {
     }
     requestAnimationFrame(gameLoop);
 }
-function resetFight() {
+function resetFight(hardReset = true) {
+    if (hardReset) {
+        player1Wins = 0;
+        player2Wins = 0;
+        window.currentRound = 1;
+    }
+    
     character1.health = 100;
     character2.health = 100;
     character1.x = 200;
-    character1.y = canvas.height - character1.height;
+    character1.y = getFloorY(canvas) - character1.height;
     character1.velocityY = 0;
     character1.isAttacking = false;
     character1.state = 'idle';
     character2.x = canvas.width - 250;
-    character2.y = canvas.height - character2.height;
+    character2.y = getFloorY(canvas) - character2.height;
     character2.velocityY = 0;
     character2.isAttacking = false;
     character2.state = 'idle';
@@ -445,7 +493,18 @@ function resetFight() {
     if (window.projectiles) window.projectiles.length = 0;
     result = null;
     window.matchResult = null;
-    if (typeof timer !== 'undefined') window.timer = 60; // Just in case
+    window.roundEnding = false;
+    window.roundStarting = true;
+    
+    setTimeout(() => {
+        window.roundStarting = false;
+        if (typeof decreaseTimer === 'function') decreaseTimer(character1, character2);
+    }, 1200);
+
+    if (typeof window.resetMatchTimer === 'function') {
+        window.resetMatchTimer();
+    }
+    
     playRoundStart();
     goTo("fight");
 }

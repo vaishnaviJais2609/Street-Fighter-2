@@ -49,13 +49,13 @@ window.addEventListener('keydown', (event) => {
         lastSlashPressTime = currentTime;
     }
 
-    // Player 1 Special (e)
-    if (event.key === 'e' && typeof window.player1 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult) {
+    // Player 1 Special (e, or Shift in single-player)
+    if ((event.key === 'e' || (event.key === 'Shift' && !window.isMultiplayer)) && typeof window.player1 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult) {
         window.player1.specialMove();
     }
     
-    // Player 2 Special (ArrowDown)
-    if (event.key === 'ArrowDown' && typeof window.player2 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult && window.isMultiplayer) {
+    // Player 2 Special (Shift in multiplayer)
+    if (event.key === 'Shift' && typeof window.player2 !== 'undefined' && window.getCurrentScene && window.getCurrentScene() === 'fight' && !window.matchResult && window.isMultiplayer) {
         window.player2.specialMove();
     }
 });

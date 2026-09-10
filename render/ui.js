@@ -419,8 +419,6 @@ export function drawUI(ctx, canvas, character1, character2, timer, player1Wins, 
     }
     if (result) {
         ctx.save();
-        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.fillRect(0, canvas.height / 2 - 60, canvas.width, 120);
         ctx.fillStyle = "#FFDE00";
         ctx.shadowColor = "#FF3300";
         ctx.shadowBlur = 18;
@@ -450,9 +448,9 @@ export function drawInstructions(ctx, canvas) {
     ctx.fillText("HOW TO PLAY", canvas.width / 2, canvas.height * 0.1);
     ctx.restore();
 
-    const panelWidth = Math.min(340, canvas.width * 0.4);
+    const panelWidth = Math.min(300, canvas.width * 0.35);
     const panelHeight = Math.min(400, canvas.height * 0.65);
-    const gap = 40;
+    const gap = 90;
     const totalW = panelWidth * 2 + gap;
     const panelX1 = (canvas.width - totalW) / 2;
     const panelX2 = panelX1 + panelWidth + gap;
@@ -568,17 +566,19 @@ export function drawInstructions(ctx, canvas) {
 
     // Player 1 controls
     const p1Controls = [
-        { action: "MOVE", keys: ["W", "A", "S", "D"] },
+        { action: "MOVE LEFT/RIGHT", keys: ["A", "D"] },
         { action: "JUMP", keys: ["W"] },
-        { action: "ATTACK", keys: ["SPACE"] },
-        { action: "SPECIAL", keys: ["F"] }
+        { action: "PUNCH", keys: ["SPACE"] },
+        { action: "KICK", keys: ["SPACE x2"] },
+        { action: "SPECIAL", keys: ["E", "SHIFT"] }
     ];
 
-    // Player 2 controls
+    // Player 2 controls (Multiplayer)
     const p2Controls = [
-        { action: "MOVE", keys: ["↑", "←", "↓", "→"] },
+        { action: "MOVE LEFT/RIGHT", keys: ["←", "→"] },
         { action: "JUMP", keys: ["↑"] },
-        { action: "ATTACK", keys: ["ENTER"] },
+        { action: "PUNCH", keys: ["/"] },
+        { action: "KICK", keys: ["/ x2"] },
         { action: "SPECIAL", keys: ["SHIFT"] }
     ];
 

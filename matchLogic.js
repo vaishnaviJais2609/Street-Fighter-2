@@ -107,6 +107,7 @@ function decreaseTimer(p1, p2) {
     if (timer > 0) {
         timerId = setTimeout(() => decreaseTimer(p1, p2), 1000);
         timer--;
+        window.timer = timer; // Expose to UI
     }
     if (timer === 0) {
         if (p1.health === p2.health) {
@@ -130,3 +131,8 @@ function determineWinner(p1, p2) {
         }
     }
 }
+window.resetMatchTimer = function() {
+    clearTimeout(timerId);
+    timer = 60;
+    window.timer = timer;
+};
