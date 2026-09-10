@@ -41,10 +41,13 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
 }
 export function getMenuButtonBounds(canvas) {
     const btnWidth = Math.min(canvas.width * 0.7, 440);
-    const btnHeight = 56;
-    const btnGap = 16;
+    const btnGap = 14;
+    const footerReserve = 60;
+    const btnHeight = MENU_ITEMS.length > 4 ? 50 : 56;
     const totalHeight = MENU_ITEMS.length * btnHeight + (MENU_ITEMS.length - 1) * btnGap;
-    const startY = Math.max(canvas.height * 0.52, (canvas.height - totalHeight) / 2 + 80);
+    const preferredStartY = canvas.height * 0.5;
+    const maxStartY = canvas.height - footerReserve - totalHeight;
+    const startY = Math.max(120, Math.min(preferredStartY, maxStartY));
     const startX = (canvas.width - btnWidth) / 2;
     return MENU_ITEMS.map((item, index) => ({
         index,
@@ -427,4 +430,183 @@ export function drawUI(ctx, canvas, character1, character2, timer, player1Wins, 
         ctx.restore();
     }
     ctx.textAlign = "left";
+}
+
+export function drawInstructions(ctx, canvas) {
+    // Dark cinematic background
+    if (menuBg.complete && menuBg.naturalWidth > 0) {
+        ctx.drawImage(menuBg, 0, 0, canvas.width, canvas.height);
+    }
+    ctx.fillStyle = "rgba(4, 8, 24, 0.92)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Title
+    ctx.save();
+    ctx.font = "bold 28px 'Press Start 2P', monospace, sans-serif";
+    ctx.fillStyle = "#FFDE00";
+    ctx.shadowColor = "#FF5500";
+    ctx.shadowBlur = 15;
+    ctx.textAlign = "center";
+    ctx.fillText("HOW TO PLAY", canvas.width / 2, canvas.height * 0.1);
+    ctx.restore();
+
+    const panelWidth = Math.min(340, canvas.width * 0.4);
+    const panelHeight = Math.min(400, canvas.height * 0.65);
+    const gap = 40;
+    const totalW = panelWidth * 2 + gap;
+    const panelX1 = (canvas.width - totalW) / 2;
+    const panelX2 = panelX1 + panelWidth + gap;
+    const panelY = canvas.height * 0.18;
+
+    // Helper: draw a single panel
+    function drawPanel(px, py, title, titleColor, controls) {
+        // Panel background
+        ctx.save();
+        const grad = ctx.createLinearGradient(px, py, px, py + panelHeight);
+        grad.addColorStop(0, "rgba(16, 57, 130, 0.55)");
+        grad.addColorStop(1, "rgba(7, 30, 77, 0.55)");
+        ctx.fillStyle = grad;
+        drawRoundedRect(ctx, px, py, panelWidth, panelHeight, 12);
+        ctx.fill();
+        ctx.strokeStyle = titleColor;
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = titleColor;
+        ctx.shadowBlur = 10;
+        ctx.stroke();
+        ctx.restore();
+
+        // Panel title
+        ctx.save();
+        ctx.font = "bold 16px 'Press Start 2P', monospace, sans-serif";
+        ctx.fillStyle = titleColor;
+        ctx.textAlign = "center";
+        ctx.shadowColor = "rgba(0,0,0,0.8)";
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(title, px + panelWidth / 2, py + 38);
+        ctx.restore();
+
+        // Divider line
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,255,255,0.15)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(px + 20, py + 55);
+        ctx.lineTo(px + panelWidth - 20, py + 55);
+        ctx.stroke();
+        ctx.restore();
+
+        // Draw each control row
+        let rowY = py + 80;
+        const keyWidth = 46;
+        const keyHeight = 36;
+        const keyRadius = 6;
+
+        controls.forEach(ctrl => {
+            // Action label
+            ctx.save();
+            ctx.font = "bold 10px 'Press Start 2P', monospace, sans-serif";
+            ctx.fillStyle = "#8899bb";
+            ctx.textAlign = "left";
+            ctx.fillText(ctrl.action, px + 20, rowY);
+            ctx.restore();
+
+            // Draw key(s)
+            const keysStartX = px + 20;
+            const keysY = rowY + 10;
+            let kx = keysStartX;
+
+            ctrl.keys.forEach((key, ki) => {
+                const thisKeyW = key.length > 2 ? Math.max(keyWidth, key.length * 10 + 16) : keyWidth;
+
+                // Key shadow
+                ctx.save();
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                drawRoundedRect(ctx, kx + 2, keysY + 2, thisKeyW, keyHeight, keyRadius);
+                ctx.fill();
+                ctx.restore();
+
+                // Key background gradient
+                ctx.save();
+                const keyGrad = ctx.createLinearGradient(kx, keysY, kx, keysY + keyHeight);
+                keyGrad.addColorStop(0, "#3a3a4a");
+                keyGrad.addColorStop(0.5, "#2a2a38");
+                keyGrad.addColorStop(1, "#1e1e2a");
+                ctx.fillStyle = keyGrad;
+                drawRoundedRect(ctx, kx, keysY, thisKeyW, keyHeight, keyRadius);
+                ctx.fill();
+
+                // Key border
+                ctx.strokeStyle = "#5a5a6a";
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Inner highlight
+                const innerGrad = ctx.createLinearGradient(kx, keysY, kx, keysY + keyHeight * 0.4);
+                innerGrad.addColorStop(0, "rgba(255,255,255,0.12)");
+                innerGrad.addColorStop(1, "rgba(255,255,255,0)");
+                ctx.fillStyle = innerGrad;
+                drawRoundedRect(ctx, kx + 2, keysY + 2, thisKeyW - 4, keyHeight * 0.4, keyRadius - 2);
+                ctx.fill();
+                ctx.restore();
+
+                // Key label
+                ctx.save();
+                ctx.font = "bold 12px 'Press Start 2P', monospace, sans-serif";
+                ctx.fillStyle = "#FFFFFF";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(key, kx + thisKeyW / 2, keysY + keyHeight / 2 + 1);
+                ctx.restore();
+
+                kx += thisKeyW + 8;
+            });
+
+            rowY += 62;
+        });
+    }
+
+    // Player 1 controls
+    const p1Controls = [
+        { action: "MOVE", keys: ["W", "A", "S", "D"] },
+        { action: "JUMP", keys: ["W"] },
+        { action: "ATTACK", keys: ["SPACE"] },
+        { action: "SPECIAL", keys: ["F"] }
+    ];
+
+    // Player 2 controls
+    const p2Controls = [
+        { action: "MOVE", keys: ["↑", "←", "↓", "→"] },
+        { action: "JUMP", keys: ["↑"] },
+        { action: "ATTACK", keys: ["ENTER"] },
+        { action: "SPECIAL", keys: ["SHIFT"] }
+    ];
+
+    drawPanel(panelX1, panelY, "PLAYER 1", "#FF4444", p1Controls);
+    drawPanel(panelX2, panelY, "PLAYER 2", "#4488FF", p2Controls);
+
+    // VS badge in center
+    ctx.save();
+    const vsX = canvas.width / 2;
+    const vsY = panelY + panelHeight / 2;
+    ctx.font = "bold 24px 'Press Start 2P', monospace, sans-serif";
+    ctx.fillStyle = "#FFDE00";
+    ctx.shadowColor = "#FF8800";
+    ctx.shadowBlur = 12;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("VS", vsX, vsY);
+    ctx.restore();
+
+    // General instructions at bottom
+    ctx.save();
+    ctx.font = "bold 10px 'Press Start 2P', monospace, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.textAlign = "center";
+    ctx.fillText("REDUCE YOUR OPPONENT'S HEALTH TO ZERO TO WIN!", canvas.width / 2, canvas.height - 60);
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.font = "11px 'Press Start 2P', monospace, sans-serif";
+    ctx.fillText("[ESC] Back to Menu", canvas.width / 2, canvas.height - 30);
+    ctx.restore();
 }
