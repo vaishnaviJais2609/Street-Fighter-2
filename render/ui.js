@@ -450,8 +450,25 @@ export function drawInstructions(ctx, canvas) {
     ctx.fillText("HOW TO PLAY", canvas.width / 2, canvas.height * 0.1);
     ctx.restore();
 
+    const p1Controls = [
+        { action: "MOVE LEFT/RIGHT", keys: ["A", "D"] },
+        { action: "JUMP", keys: ["W"] },
+        { action: "PUNCH/KICK", keys: ["SPACE", "SPACE x2"] },
+        { action: "SPECIAL", keys: ["E"] },
+        { action: "CROUCH", keys: ["S"] }
+    ];
+
+    const p2Controls = [
+        { action: "MOVE LEFT/RIGHT", keys: ["←", "→"] },
+        { action: "JUMP", keys: ["↑"] },
+        { action: "PUNCH", keys: ["/"] },
+        { action: "KICK", keys: ["/ x2"] },
+        { action: "SPECIAL", keys: ["SHIFT"] }
+    ];
+
+    const maxRows = Math.max(p1Controls.length, p2Controls.length);
     const panelWidth = Math.min(300, canvas.width * 0.35);
-    const panelHeight = Math.min(400, canvas.height * 0.65);
+    const panelHeight = Math.min(80 + maxRows * 62 + 30, canvas.height * 0.75);
     const gap = 90;
     const totalW = panelWidth * 2 + gap;
     const panelX1 = (canvas.width - totalW) / 2;
@@ -566,23 +583,6 @@ export function drawInstructions(ctx, canvas) {
         });
     }
 
-
-    const p1Controls = [
-        { action: "MOVE LEFT/RIGHT", keys: ["A", "D"] },
-        { action: "JUMP", keys: ["W"] },
-        { action: "PUNCH", keys: ["SPACE"] },
-        { action: "KICK", keys: ["SPACE x2"] },
-        { action: "SPECIAL", keys: ["E", "SHIFT"] }
-    ];
-
-
-    const p2Controls = [
-        { action: "MOVE LEFT/RIGHT", keys: ["←", "→"] },
-        { action: "JUMP", keys: ["↑"] },
-        { action: "PUNCH", keys: ["/"] },
-        { action: "KICK", keys: ["/ x2"] },
-        { action: "SPECIAL", keys: ["SHIFT"] }
-    ];
 
     drawPanel(panelX1, panelY, "PLAYER 1", "#FF4444", p1Controls);
     drawPanel(panelX2, panelY, "PLAYER 2", "#4488FF", p2Controls);
