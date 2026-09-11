@@ -451,11 +451,11 @@ export function drawInstructions(ctx, canvas) {
     ctx.restore();
 
     const p1Controls = [
-        { action: "MOVE LEFT/RIGHT", keys: ["A", "D"] },
-        { action: "JUMP", keys: ["W"] },
+        { action: "MOVE LEFT/RIGHT", keys: ["a", "d"] },
+        { action: "JUMP", keys: ["w"] },
         { action: "PUNCH/KICK", keys: ["SPACE", "SPACE x2"] },
-        { action: "SPECIAL", keys: ["E"] },
-        { action: "CROUCH", keys: ["S"] }
+        { action: "SPECIAL", keys: ["e"] },
+        { action: "CROUCH", keys: ["s"] }
     ];
 
     const p2Controls = [
