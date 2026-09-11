@@ -1,7 +1,7 @@
 import { drawUI, drawMainMenu, drawBackgroundSelect, drawCharacterSelect, drawInstructions, getMenuButtonBounds, getStageSelectCardBounds, getCharacterSelectCardBounds, CHARACTERS, getSelectedCharacterIndex, setSelectedCharacterIndex } from "./render/ui.js";
 import { drawBackground, STAGES, getCurrentStageIndex, setStageIndex, getFloorY, drawRoundBanner } from "./render/stage.js";
 import { getCurrentScene, goTo, MENU_ITEMS, getSelectedIndex, setSelectedIndex, moveSelection } from "./render/menu.js";
-import { updateSFX, playRoundStart, playWin, playRoundMusic, stopRoundMusic } from "./render/sfx.js";
+import { updateSFX, playRoundStart, playWin, playHitSFX, playKnockdownSFX, startBgMusic, stopBgMusic, pauseBgMusic, resumeBgMusic, toggleBgMusic, isBgMusicOn } from "./render/sfx.js";
 window.getCurrentScene = getCurrentScene;
 window.getFloorY = getFloorY;
 const canvas = document.getElementById("gameCanvas");
@@ -14,11 +14,10 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-const p2WinImg = new Image();
-p2WinImg.src = "assets/WhatsApp Image 2026-09-10 at 2.37.12 PM.jpeg";
-
 const p1WinImg = new Image();
 p1WinImg.src = "assets/WhatsApp Image 2026-09-10 at 2.37.40 PM.jpeg";
+const p2WinImg = new Image();
+p2WinImg.src = "assets/WhatsApp Image 2026-09-10 at 2.37.12 PM.jpeg";
 
 const gravity = 0.7;
 const FRAME_DELAY = 5;
@@ -36,7 +35,7 @@ class Projectile {
         this.frameIndex = 0;
         this.frameTimer = 0;
         this.markedForDeletion = false;
-        this.width = 50; 
+        this.width = 50;
         this.height = 50;
     }
     draw() {
@@ -103,7 +102,7 @@ class Fighter {
         this.width = 50;
         this.height = 150;
         this.color = color;
-        this.facing = facing; 
+        this.facing = facing;
         this.velocityY = 0;
         this.velocityX = 0;
         this.speed = 5;
@@ -234,10 +233,10 @@ class Fighter {
         if (this.isAttacking) return;
         this.isAttacking = true;
         this.hasHit = false;
-        
+
         if (this === window.player2 && !window.isMultiplayer) {
             const punches = ['punch', 'punch2', 'punch3'];
-            this.state = punches[Math.floor(Math.random() * punches.length)]; 
+            this.state = punches[Math.floor(Math.random() * punches.length)];
         } else {
             this.state = 'punch';
         }
@@ -245,17 +244,16 @@ class Fighter {
     attackNew() {
         if (this.isAttacking) return;
         this.isAttacking = true;
-        this.hasHit = false;
         this.frameIndex = 0;
         this.frameTimer = 0;
         const newPunches = ['punch2', 'punch3'];
         this.state = newPunches[Math.floor(Math.random() * newPunches.length)];
-    }    
+    }
     kick() {
         if (this.isAttacking && this.state !== 'punch') return;
         this.isAttacking = true;
         this.hasHit = false;
-        this.state = 'kick'; 
+        this.state = 'kick';
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
@@ -270,7 +268,7 @@ class Fighter {
         }
         this.isAttacking = true;
         this.hasHit = false;
-        this.state = 'special'; 
+        this.state = 'special';
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
@@ -320,7 +318,45 @@ function setMultiplayer(value) {
 let hoveredMenuIndex = -1;
 let hoveredStageIndex = -1;
 let hoveredCharIndex = -1;
+let isPaused = false;
+window.isPaused = false;
+
+const pauseBtn = document.getElementById('pauseBtn');
+const pauseOverlay = document.getElementById('pauseOverlay');
+const pmResume = document.getElementById('pmResume');
+const pmMusic = document.getElementById('pmMusic');
+const pmRestart = document.getElementById('pmRestart');
+const pmQuit = document.getElementById('pmQuit');
+
+function openPause() {
+    isPaused = true;
+    window.isPaused = true;
+    pauseOverlay.classList.add('active');
+}
+function closePause() {
+    isPaused = false;
+    window.isPaused = false;
+    pauseOverlay.classList.remove('active');
+}
+
+pauseBtn.addEventListener('click', () => { isPaused ? closePause() : openPause(); });
+pmResume.addEventListener('click', closePause);
+pmMusic.addEventListener('click', () => {
+    const on = toggleBgMusic();
+    pmMusic.textContent = (on ? '\u266B MUSIC: ON' : '\u266B MUSIC: OFF');
+});
+pmRestart.addEventListener('click', () => {
+    closePause();
+    resetFight(true);
+});
+pmQuit.addEventListener('click', () => {
+    closePause();
+    stopBgMusic();
+    goTo('menu');
+});
+
 function gameLoop() {
+    if (isPaused) { requestAnimationFrame(gameLoop); return; }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const scene = getCurrentScene();
     if (scene === "menu") {
@@ -335,8 +371,8 @@ function gameLoop() {
         if (!window.matchResult) {
             if (typeof keys !== 'undefined') {
                 if (window.isMultiplayer) {
-                    
-                    
+
+
                     let p1MovingLeft = keys.a.pressed;
                     let p1MovingRight = keys.d.pressed;
                     character1.isCrouching = keys.s.pressed;
@@ -355,10 +391,10 @@ function gameLoop() {
                         character1.velocityY = -15;
                     }
 
-                    
+
                     let p2MovingLeft = keys.ArrowLeft.pressed;
                     let p2MovingRight = keys.ArrowRight.pressed;
-                    character2.isCrouching = false; 
+                    character2.isCrouching = false;
 
                     if (p2MovingLeft) {
                         character2.velocityX = -character2.speed;
@@ -374,10 +410,10 @@ function gameLoop() {
                         character2.velocityY = -15;
                     }
                 } else {
-                    
+
                     let movingLeft = keys.a.pressed || keys.ArrowLeft.pressed;
                     let movingRight = keys.d.pressed || keys.ArrowRight.pressed;
-                    
+
                     character1.isCrouching = keys.s.pressed || keys.ArrowDown.pressed;
 
                     if (character1.isCrouching) {
@@ -403,7 +439,7 @@ function gameLoop() {
                     character2.facing = 1;
                 }
             } else if (window.isMultiplayer) {
-                
+
                 if (character1.x < character2.x) {
                     character1.facing = 1;
                     character2.facing = -1;
@@ -438,19 +474,19 @@ function gameLoop() {
         if (typeof determineWinner === 'function' && !window.roundEnding && !window.roundStarting) {
             determineWinner(character1, character2);
         }
-        
+
         if (window.matchResult && !window.roundEnding) {
             window.roundEnding = true;
-            
+
             setTimeout(() => {
                 if (window.matchResult === 'Player 1 Wins') {
                     player1Wins++;
                 } else if (window.matchResult === 'Player 2 Wins') {
                     player2Wins++;
                 }
-                
+
                 if (player1Wins >= 2 || player2Wins >= 2) {
-                    stopRoundMusic();
+
                     if (player1Wins >= 2) {
                         result = "PLAYER 1 WINS THE MATCH";
                     } else {
@@ -458,7 +494,7 @@ function gameLoop() {
                     }
                     goTo("results");
                 } else {
-                    
+
                     window.currentRound++;
                     resetFight(false);
                 }
@@ -476,6 +512,7 @@ function gameLoop() {
     } else if (scene === "instructions") {
         drawInstructions(ctx, canvas);
     }
+    pauseBtn.style.display = (scene === 'fight') ? 'block' : 'none';
     requestAnimationFrame(gameLoop);
 }
 function resetFight(hardReset = true) {
@@ -484,7 +521,7 @@ function resetFight(hardReset = true) {
         player2Wins = 0;
         window.currentRound = 1;
     }
-    
+
     character1.health = 100;
     character2.health = 100;
     character1.x = 200;
@@ -503,18 +540,18 @@ function resetFight(hardReset = true) {
     window.matchResult = null;
     window.roundEnding = false;
     window.roundStarting = true;
-    
+
     setTimeout(() => {
         window.roundStarting = false;
-        playRoundMusic(window.currentRound);
         if (typeof decreaseTimer === 'function') decreaseTimer(character1, character2);
     }, 1200);
 
     if (typeof window.resetMatchTimer === 'function') {
         window.resetMatchTimer();
     }
-    
+
     playRoundStart();
+    startBgMusic();
     goTo("fight");
 }
 function executeMenuOption(index) {
@@ -535,58 +572,41 @@ function executeMenuOption(index) {
     }
 }
 function drawResults() {
-    
     drawBackground(ctx, canvas);
-    
     let currentTimer = typeof timer !== 'undefined' ? timer : 99;
-   
     drawUI(ctx, canvas, character1, character2, currentTimer, player1Wins, player2Wins, null);
 
-   
     ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
+
+    let winImg = null;
+    if (result === "PLAYER 1 WINS THE MATCH") winImg = p1WinImg;
+    else if (result === "PLAYER 2 WINS THE MATCH") winImg = p2WinImg;
+
+    if (winImg && winImg.complete && winImg.naturalWidth > 0) {
+        let imgWidth = 260;
+        let imgHeight = (winImg.height / winImg.width) * imgWidth;
+        let imgY = canvas.height / 2 - imgHeight - 60;
+        if (imgY < 30) {
+            imgY = 30;
+            imgHeight = (canvas.height / 2 - 60) - 30;
+            imgWidth = (winImg.width / winImg.height) * imgHeight;
+        }
+        ctx.shadowBlur = 0;
+        ctx.drawImage(winImg, canvas.width / 2 - imgWidth / 2, imgY, imgWidth, imgHeight);
+    }
+
+    let textY = canvas.height / 2 + 20;
     ctx.fillStyle = "#FFDE00";
     ctx.shadowColor = "#FF3300";
     ctx.shadowBlur = 20;
     ctx.textAlign = "center";
     ctx.font = "bold 36px 'Press Start 2P', monospace, sans-serif";
-    
-    
-    let textY = canvas.height / 2 + 20;
     ctx.fillText(result || "K.O. - RESULTS", canvas.width / 2, textY);
-    
-    if (result === "PLAYER 2 WINS THE MATCH" && p2WinImg.complete) {
-        let imgWidth = 260; 
-        let imgHeight = (p2WinImg.height / p2WinImg.width) * imgWidth;
-        
-        let imgY = canvas.height / 2 - imgHeight - 60;
-        
-        if (imgY < 30) {
-            imgY = 30;
-            imgHeight = (canvas.height / 2 - 60) - 30;
-            imgWidth = (p2WinImg.width / p2WinImg.height) * imgHeight;
-        }
-        
-        ctx.shadowBlur = 0; 
-        ctx.drawImage(p2WinImg, canvas.width / 2 - imgWidth / 2, imgY, imgWidth, imgHeight);
-    } else if (result === "PLAYER 1 WINS THE MATCH" && p1WinImg.complete) {
-        let imgWidth = 260; 
-        let imgHeight = (p1WinImg.height / p1WinImg.width) * imgWidth;
-        
-        let imgY = canvas.height / 2 - imgHeight - 60;
-        
-        if (imgY < 30) {
-            imgY = 30;
-            imgHeight = (canvas.height / 2 - 60) - 30;
-            imgWidth = (p1WinImg.width / p1WinImg.height) * imgHeight;
-        }
-        
-        ctx.shadowBlur = 0; 
-        ctx.drawImage(p1WinImg, canvas.width / 2 - imgWidth / 2, imgY, imgWidth, imgHeight);
-    }
-    
+
+    ctx.shadowBlur = 0;
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "14px 'Press Start 2P', monospace, sans-serif";
     ctx.fillText("PRESS ENTER TO REMATCH", canvas.width / 2, textY + 60);
@@ -629,8 +649,8 @@ window.addEventListener("keydown", function (event) {
             goTo("menu");
         }
     } else if (scene === "fight") {
-        if (event.key === "Escape") {
-            goTo("menu");
+        if (event.key === "p" || event.key === "P" || event.key === "Escape") {
+            isPaused ? closePause() : openPause();
         }
     } else if (scene === "instructions") {
         if (event.key === "Escape" || event.key === "Enter" || event.key === " ") {

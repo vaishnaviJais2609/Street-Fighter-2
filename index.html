@@ -1,16 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Street Fighter II</title>
-    <link rel="icon" type="image/png" href="assets/icons8-game-controller-48.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        #pauseBtn {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: #1a1040;
+            border: 2px solid #FFDE00;
+            color: #FFDE00;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 9px;
+            padding: 9px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: none;
+            letter-spacing: 1px;
+            transition: background 0.15s;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        #pauseBtn:hover {
+            background: #1a1040;
+        }
+
+        #pauseOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.72);
+        }
+
+        #pauseOverlay.active {
+            display: flex;
+        }
+
+        #pauseMenu {
+            background: linear-gradient(160deg, #0c1024 70%, #1a1040);
+            border: 3px solid #FFDE00;
+            border-radius: 10px;
+            padding: 40px 54px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        #pauseMenu h2 {
+            color: #FFDE00;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 22px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 16px #FF3300;
+            letter-spacing: 2px;
+        }
+
+        .pmBtn {
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 12px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.07);
+            border: 2px solid rgba(255, 222, 0, 0.5);
+            border-radius: 5px;
+            padding: 12px 28px;
+            cursor: pointer;
+            width: 240px;
+            text-align: center;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            letter-spacing: 1px;
+        }
+
+        .pmBtn:hover {
+            background: rgba(255, 222, 0, 0.18);
+            border-color: #FFDE00;
+            color: #FFDE00;
+        }
+
+        .pmBtn.danger {
+            border-color: rgba(255, 60, 60, 0.5);
+        }
+
+        .pmBtn.danger:hover {
+            background: rgba(255, 60, 60, 0.15);
+            border-color: #ff3c3c;
+            color: #ff3c3c;
+        }
+    </style>
 </head>
+
 <body>
+    <button id="pauseBtn">&#9646;&#9646; PAUSE</button>
+    <div id="pauseOverlay">
+        <div id="pauseMenu">
+            <h2>PAUSED</h2>
+            <button class="pmBtn" id="pmResume">&#9654; RESUME</button>
+            <button class="pmBtn" id="pmMusic">&#9835; MUSIC: ON</button>
+            <button class="pmBtn" id="pmRestart">&#8635; RESTART</button>
+            <button class="pmBtn danger" id="pmQuit">&#9632; QUIT TO MENU</button>
+        </div>
+    </div>
     <canvas id="gameCanvas"></canvas>
     <script src="stateMachine.js"></script>
     <script src="collision.js"></script>
@@ -18,4 +120,5 @@
     <script src="inputBuffer.js"></script>
     <script type="module" src="script.js"></script>
 </body>
+
 </html>

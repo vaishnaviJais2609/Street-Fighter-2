@@ -371,7 +371,7 @@ export function drawCharacterSelect(ctx, canvas, activeIndex = getSelectedCharac
 export function drawUI(ctx, canvas, character1, character2, timer, player1Wins, player2Wins, result) {
     const barWidth = Math.min(canvas.width * 0.35, 340);
     const barHeight = 24;
-    const barY = 40;
+    const barY = 38;
     const p1X = 50;
     const p2X = canvas.width - barWidth - 50;
     ctx.fillStyle = "#8B0000";
@@ -390,10 +390,12 @@ export function drawUI(ctx, canvas, character1, character2, timer, player1Wins, 
     const p2Char = CHARACTERS.find((_, i) => i !== selectedCharacterIndex) || CHARACTERS[1] || CHARACTERS[0];
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "bold 14px 'Press Start 2P', monospace, sans-serif";
+    ctx.textBaseline = "bottom";
     ctx.textAlign = "left";
-    ctx.fillText(p1Char.name, p1X, barY - 12);
+    ctx.fillText(p1Char.name, p1X, barY - 6);
     ctx.textAlign = "right";
-    ctx.fillText(p2Char.name, p2X + barWidth, barY - 12);
+    ctx.fillText(p2Char.name, p2X + barWidth, barY - 6);
+    ctx.textBaseline = "alphabetic";
     ctx.save();
     ctx.font = "bold 34px 'Press Start 2P', monospace, sans-serif";
     ctx.textAlign = "center";
@@ -431,14 +433,14 @@ export function drawUI(ctx, canvas, character1, character2, timer, player1Wins, 
 }
 
 export function drawInstructions(ctx, canvas) {
-    
+
     if (menuBg.complete && menuBg.naturalWidth > 0) {
         ctx.drawImage(menuBg, 0, 0, canvas.width, canvas.height);
     }
     ctx.fillStyle = "rgba(4, 8, 24, 0.92)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    
+
     ctx.save();
     ctx.font = "bold 28px 'Press Start 2P', monospace, sans-serif";
     ctx.fillStyle = "#FFDE00";
@@ -456,9 +458,9 @@ export function drawInstructions(ctx, canvas) {
     const panelX2 = panelX1 + panelWidth + gap;
     const panelY = canvas.height * 0.18;
 
-    
+
     function drawPanel(px, py, title, titleColor, controls) {
-        
+
         ctx.save();
         const grad = ctx.createLinearGradient(px, py, px, py + panelHeight);
         grad.addColorStop(0, "rgba(16, 57, 130, 0.55)");
@@ -473,7 +475,7 @@ export function drawInstructions(ctx, canvas) {
         ctx.stroke();
         ctx.restore();
 
-        
+
         ctx.save();
         ctx.font = "bold 16px 'Press Start 2P', monospace, sans-serif";
         ctx.fillStyle = titleColor;
@@ -484,7 +486,7 @@ export function drawInstructions(ctx, canvas) {
         ctx.fillText(title, px + panelWidth / 2, py + 38);
         ctx.restore();
 
-        
+
         ctx.save();
         ctx.strokeStyle = "rgba(255,255,255,0.15)";
         ctx.lineWidth = 1;
@@ -494,14 +496,14 @@ export function drawInstructions(ctx, canvas) {
         ctx.stroke();
         ctx.restore();
 
-        
+
         let rowY = py + 80;
         const keyWidth = 46;
         const keyHeight = 36;
         const keyRadius = 6;
 
         controls.forEach(ctrl => {
-            
+
             ctx.save();
             ctx.font = "bold 10px 'Press Start 2P', monospace, sans-serif";
             ctx.fillStyle = "#8899bb";
@@ -509,7 +511,7 @@ export function drawInstructions(ctx, canvas) {
             ctx.fillText(ctrl.action, px + 20, rowY);
             ctx.restore();
 
-            
+
             const keysStartX = px + 20;
             const keysY = rowY + 10;
             let kx = keysStartX;
@@ -517,14 +519,14 @@ export function drawInstructions(ctx, canvas) {
             ctrl.keys.forEach((key, ki) => {
                 const thisKeyW = key.length > 2 ? Math.max(keyWidth, key.length * 10 + 16) : keyWidth;
 
-                
+
                 ctx.save();
                 ctx.fillStyle = "rgba(0,0,0,0.5)";
                 drawRoundedRect(ctx, kx + 2, keysY + 2, thisKeyW, keyHeight, keyRadius);
                 ctx.fill();
                 ctx.restore();
 
-                
+
                 ctx.save();
                 const keyGrad = ctx.createLinearGradient(kx, keysY, kx, keysY + keyHeight);
                 keyGrad.addColorStop(0, "#3a3a4a");
@@ -534,12 +536,12 @@ export function drawInstructions(ctx, canvas) {
                 drawRoundedRect(ctx, kx, keysY, thisKeyW, keyHeight, keyRadius);
                 ctx.fill();
 
-                
+
                 ctx.strokeStyle = "#5a5a6a";
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
 
-                
+
                 const innerGrad = ctx.createLinearGradient(kx, keysY, kx, keysY + keyHeight * 0.4);
                 innerGrad.addColorStop(0, "rgba(255,255,255,0.12)");
                 innerGrad.addColorStop(1, "rgba(255,255,255,0)");
@@ -548,7 +550,7 @@ export function drawInstructions(ctx, canvas) {
                 ctx.fill();
                 ctx.restore();
 
-                
+
                 ctx.save();
                 ctx.font = "bold 12px 'Press Start 2P', monospace, sans-serif";
                 ctx.fillStyle = "#FFFFFF";
@@ -564,7 +566,7 @@ export function drawInstructions(ctx, canvas) {
         });
     }
 
-    
+
     const p1Controls = [
         { action: "MOVE LEFT/RIGHT", keys: ["A", "D"] },
         { action: "JUMP", keys: ["W"] },
@@ -573,7 +575,7 @@ export function drawInstructions(ctx, canvas) {
         { action: "SPECIAL", keys: ["E", "SHIFT"] }
     ];
 
-    
+
     const p2Controls = [
         { action: "MOVE LEFT/RIGHT", keys: ["←", "→"] },
         { action: "JUMP", keys: ["↑"] },
@@ -585,7 +587,7 @@ export function drawInstructions(ctx, canvas) {
     drawPanel(panelX1, panelY, "PLAYER 1", "#FF4444", p1Controls);
     drawPanel(panelX2, panelY, "PLAYER 2", "#4488FF", p2Controls);
 
-    
+
     ctx.save();
     const vsX = canvas.width / 2;
     const vsY = panelY + panelHeight / 2;
@@ -598,7 +600,7 @@ export function drawInstructions(ctx, canvas) {
     ctx.fillText("VS", vsX, vsY);
     ctx.restore();
 
-    
+
     ctx.save();
     ctx.font = "bold 10px 'Press Start 2P', monospace, sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.5)";
