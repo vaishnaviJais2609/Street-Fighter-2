@@ -236,8 +236,10 @@ class Fighter {
         }
     }
     attackNew() {
-        if (this.isAttacking) return;
+        
+        if (this.isAttacking && this.state !== 'punch') return;
         this.isAttacking = true;
+        this.hasHit = false;
         this.frameIndex = 0;
         this.frameTimer = 0;
         const newPunches = ['punch2', 'punch3'];

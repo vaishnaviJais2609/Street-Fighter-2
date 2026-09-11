@@ -61,18 +61,14 @@ function checkHits(p1, p2) {
     if (window.matchResult) return;
     if (p1.isAttacking && !p1.hasHit && typeof detectCollision === 'function' && detectCollision(p1, p2)) {
         p1.hasHit = true;
-        if (!p2.isCrouching && p2.state !== 'crouch') {
-            p2.health -= 10;
-            if (p2.health < 0) p2.health = 0;
-        }
+        p2.health -= 10;
+        if (p2.health < 0) p2.health = 0;
     }
 
     if (p2.isAttacking && !p2.hasHit && typeof detectCollision === 'function' && detectCollision(p2, p1)) {
         p2.hasHit = true;
-        if (!p1.isCrouching && p1.state !== 'crouch') {
-            p1.health -= 10;
-            if (p1.health < 0) p1.health = 0;
-        }
+        p1.health -= 10;
+        if (p1.health < 0) p1.health = 0;
     }
     if (window.projectiles && typeof detectProjectileCollision === 'function') {
         for (let i = 0; i < window.projectiles.length; i++) {
