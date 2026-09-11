@@ -2,7 +2,7 @@ function updateAI(p1, p2) {
     if (p2.aiDecisionTimer > 0) {
         p2.aiDecisionTimer--;
         const floorY = (window.getFloorY && window.canvas) ? window.getFloorY(window.canvas) : 600;
-        if (p2.y + p2.height < floorY - 50 && p2.velocityY !== 0) return; 
+        if (p2.y + p2.height < floorY - 50 && p2.velocityY !== 0) return;
     }
     if (window.projectiles) {
         for (let i = 0; i < window.projectiles.length; i++) {
@@ -12,7 +12,7 @@ function updateAI(p1, p2) {
                 const floorY = (window.getFloorY && window.canvas) ? window.getFloorY(window.canvas) : 600;
                 if (distToProj < 200 && p2.y + p2.height >= floorY - 50) {
                     p2.velocityY = -15;
-                    p2.aiDecisionTimer = 40; 
+                    p2.aiDecisionTimer = 40;
                     return;
                 }
             }
@@ -28,15 +28,15 @@ function updateAI(p1, p2) {
                 p2.attack();
                 p2.aiDecisionTimer = 40;
             } else if (rand < 0.8 && absDist < 60) {
-                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; 
+                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed;
                 p2.aiDecisionTimer = 15;
             } else {
-                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed; 
+                p2.velocityX = p2.facing === 1 ? -p2.speed : p2.speed;
                 p2.aiDecisionTimer = 20;
             }
         } else if (absDist > 95 && absDist <= 350) {
             if (rand < 0.6) {
-                p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed; 
+                p2.velocityX = p2.facing === 1 ? p2.speed : -p2.speed;
                 p2.aiDecisionTimer = 30;
             } else if (rand < 0.9) {
                 p2.specialMove();
@@ -81,6 +81,8 @@ function checkHits(p1, p2) {
                     if (!p2.isCrouching && p2.state !== 'crouch') {
                         p2.health -= 15;
                         if (p2.health < 0) p2.health = 0;
+                        if (typeof window.playHitSFX === 'function') window.playHitSFX();
+                        if (p2.health === 0 && typeof window.playKnockdownSFX === 'function') window.playKnockdownSFX();
                     }
                 }
                 else if (proj.owner !== p1 && detectProjectileCollision(proj, p1)) {
@@ -90,6 +92,8 @@ function checkHits(p1, p2) {
                     if (!p1.isCrouching && p1.state !== 'crouch') {
                         p1.health -= 15;
                         if (p1.health < 0) p1.health = 0;
+                        if (typeof window.playHitSFX === 'function') window.playHitSFX();
+                        if (p1.health === 0 && typeof window.playKnockdownSFX === 'function') window.playKnockdownSFX();
                     }
                 }
             }
@@ -102,8 +106,10 @@ window.matchResult = null;
 function decreaseTimer(p1, p2) {
     if (timer > 0) {
         timerId = setTimeout(() => decreaseTimer(p1, p2), 1000);
-        timer--;
-        window.timer = timer; // Expose to UI
+        if (!window.isPaused) {
+            timer--;
+            window.timer = timer;
+        }
     }
     if (timer === 0) {
         if (p1.health === p2.health) {
@@ -125,9 +131,10 @@ function determineWinner(p1, p2) {
         } else if (p2.health === 0) {
             window.matchResult = 'Player 1 Wins';
         }
+        if (typeof window.playWinSFX === 'function') window.playWinSFX();
     }
 }
-window.resetMatchTimer = function() {
+window.resetMatchTimer = function () {
     clearTimeout(timerId);
     timer = 60;
     window.timer = timer;
