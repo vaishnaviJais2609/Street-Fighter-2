@@ -1,0 +1,453 @@
+{
+    "sheet": "player3.png",
+    "frames": {
+        "walk_forward_0": {
+            "frame": {
+                "x": 24,
+                "y": 294,
+                "w": 75,
+                "h": 90
+            }
+        },
+        "walk_forward_1": {
+            "frame": {
+                "x": 107,
+                "y": 294,
+                "w": 68,
+                "h": 90
+            }
+        },
+        "walk_forward_2": {
+            "frame": {
+                "x": 183,
+                "y": 294,
+                "w": 61,
+                "h": 90
+            }
+        },
+        "walk_forward_3": {
+            "frame": {
+                "x": 252,
+                "y": 294,
+                "w": 58,
+                "h": 90
+            }
+        },
+        "walk_forward_4": {
+            "frame": {
+                "x": 318,
+                "y": 294,
+                "w": 67,
+                "h": 90
+            }
+        },
+        "walk_forward_5": {
+            "frame": {
+                "x": 393,
+                "y": 294,
+                "w": 67,
+                "h": 88
+            }
+        },
+        "walk_forward_6": {
+            "frame": {
+                "x": 468,
+                "y": 294,
+                "w": 63,
+                "h": 89
+            }
+        },
+        "walk_forward_7": {
+            "frame": {
+                "x": 539,
+                "y": 294,
+                "w": 66,
+                "h": 90
+            }
+        },
+        "jab_0": {
+            "frame": {
+                "x": 24,
+                "y": 419,
+                "w": 82,
+                "h": 116
+            }
+        },
+        "jab_1": {
+            "frame": {
+                "x": 114,
+                "y": 421,
+                "w": 75,
+                "h": 114
+            }
+        },
+        "jab_2": {
+            "frame": {
+                "x": 197,
+                "y": 445,
+                "w": 108,
+                "h": 90
+            }
+        },
+        "jab_3": {
+            "frame": {
+                "x": 313,
+                "y": 446,
+                "w": 108,
+                "h": 89
+            }
+        },
+        "jab_4": {
+            "frame": {
+                "x": 429,
+                "y": 421,
+                "w": 74,
+                "h": 114
+            }
+        },
+        "stretched_strong_0": {
+            "frame": {
+                "x": 24,
+                "y": 560,
+                "w": 86,
+                "h": 83
+            }
+        },
+        "stretched_strong_1": {
+            "frame": {
+                "x": 118,
+                "y": 563,
+                "w": 96,
+                "h": 80
+            }
+        },
+        "stretched_strong_2": {
+            "frame": {
+                "x": 222,
+                "y": 571,
+                "w": 138,
+                "h": 72
+            }
+        },
+        "stretched_strong_3": {
+            "frame": {
+                "x": 368,
+                "y": 571,
+                "w": 237,
+                "h": 72
+            }
+        },
+        "stretched_strong_4": {
+            "frame": {
+                "x": 613,
+                "y": 571,
+                "w": 138,
+                "h": 72
+            }
+        },
+        "stretched_strong_5": {
+            "frame": {
+                "x": 759,
+                "y": 571,
+                "w": 141,
+                "h": 72
+            }
+        },
+        "stretched_strong_6": {
+            "frame": {
+                "x": 908,
+                "y": 563,
+                "w": 96,
+                "h": 80
+            }
+        },
+        "stretched_strong_7": {
+            "frame": {
+                "x": 1012,
+                "y": 560,
+                "w": 83,
+                "h": 83
+            }
+        },
+        "crouch_0": {
+            "frame": {
+                "x": 24,
+                "y": 1432,
+                "w": 82,
+                "h": 86
+            }
+        },
+        "crouch_1": {
+            "frame": {
+                "x": 114,
+                "y": 1449,
+                "w": 61,
+                "h": 69
+            }
+        },
+        "crouch_2": {
+            "frame": {
+                "x": 183,
+                "y": 1450,
+                "w": 59,
+                "h": 68
+            }
+        },
+        "high_hit_0": {
+            "frame": {
+                "x": 24,
+                "y": 5004,
+                "w": 85,
+                "h": 91
+            }
+        },
+        "high_hit_1": {
+            "frame": {
+                "x": 117,
+                "y": 5004,
+                "w": 90,
+                "h": 91
+            }
+        },
+        "high_hit_2": {
+            "frame": {
+                "x": 215,
+                "y": 5004,
+                "w": 93,
+                "h": 91
+            }
+        },
+        "high_hit_3": {
+            "frame": {
+                "x": 316,
+                "y": 5004,
+                "w": 92,
+                "h": 91
+            }
+        },
+        "yoga_fire_start_0": {
+            "frame": {
+                "x": 24,
+                "y": 3241,
+                "w": 76,
+                "h": 111
+            }
+        },
+        "yoga_fire_start_1": {
+            "frame": {
+                "x": 108,
+                "y": 3241,
+                "w": 81,
+                "h": 111
+            }
+        },
+        "yoga_fire_start_2": {
+            "frame": {
+                "x": 197,
+                "y": 3241,
+                "w": 58,
+                "h": 111
+            }
+        },
+        "yoga_fire_start_3": {
+            "frame": {
+                "x": 263,
+                "y": 3271,
+                "w": 75,
+                "h": 81
+            }
+        },
+        "yoga_fire_travel_0": {
+            "frame": {
+                "x": 24,
+                "y": 3356,
+                "w": 39,
+                "h": 23
+            }
+        },
+        "yoga_fire_travel_1": {
+            "frame": {
+                "x": 81,
+                "y": 3355,
+                "w": 30,
+                "h": 24
+            }
+        },
+        "yoga_fire_travel_2": {
+            "frame": {
+                "x": 126,
+                "y": 3355,
+                "w": 33,
+                "h": 24
+            }
+        },
+        "yoga_fire_travel_3": {
+            "frame": {
+                "x": 171,
+                "y": 3356,
+                "w": 38,
+                "h": 23
+            }
+        },
+        "yoga_fire_travel_4": {
+            "frame": {
+                "x": 217,
+                "y": 3357,
+                "w": 38,
+                "h": 22
+            }
+        },
+        "yoga_fire_travel_5": {
+            "frame": {
+                "x": 267,
+                "y": 3356,
+                "w": 35,
+                "h": 23
+            }
+        },
+        "yoga_fire_travel_6": {
+            "frame": {
+                "x": 310,
+                "y": 3362,
+                "w": 39,
+                "h": 15
+            }
+        },
+        "yoga_fire_travel_7": {
+            "frame": {
+                "x": 359,
+                "y": 3363,
+                "w": 36,
+                "h": 11
+            }
+        },
+        "yoga_fire_travel_8": {
+            "frame": {
+                "x": 403,
+                "y": 3360,
+                "w": 34,
+                "h": 16
+            }
+        },
+        "yoga_fire_travel_9": {
+            "frame": {
+                "x": 455,
+                "y": 3360,
+                "w": 28,
+                "h": 15
+            }
+        },
+        "yoga_fire_travel_10": {
+            "frame": {
+                "x": 503,
+                "y": 3360,
+                "w": 28,
+                "h": 15
+            }
+        },
+        "yoga_fire_travel_11": {
+            "frame": {
+                "x": 548,
+                "y": 3360,
+                "w": 33,
+                "h": 15
+            }
+        },
+        "yoga_fire_travel_12": {
+            "frame": {
+                "x": 596,
+                "y": 3360,
+                "w": 31,
+                "h": 15
+            }
+        },
+        "yoga_fire_travel_13": {
+            "frame": {
+                "x": 645,
+                "y": 3360,
+                "w": 29,
+                "h": 15
+            }
+        },
+        "yoga_fire_travel_14": {
+            "frame": {
+                "x": 689,
+                "y": 3364,
+                "w": 33,
+                "h": 8
+            }
+        },
+        "yoga_fire_travel_15": {
+            "frame": {
+                "x": 778,
+                "y": 3362,
+                "w": 28,
+                "h": 11
+            }
+        },
+        "yoga_fire_travel_16": {
+            "frame": {
+                "x": 826,
+                "y": 3362,
+                "w": 21,
+                "h": 11
+            }
+        },
+        "yoga_fire_travel_17": {
+            "frame": {
+                "x": 862,
+                "y": 3362,
+                "w": 26,
+                "h": 12
+            }
+        },
+        "yoga_fire_travel_18": {
+            "frame": {
+                "x": 904,
+                "y": 3362,
+                "w": 27,
+                "h": 11
+            }
+        },
+        "yoga_flame_start_0": {
+            "frame": {
+                "x": 24,
+                "y": 3526,
+                "w": 104,
+                "h": 63
+            }
+        },
+        "yoga_flame_start_1": {
+            "frame": {
+                "x": 136,
+                "y": 3523,
+                "w": 108,
+                "h": 66
+            }
+        },
+        "yoga_flame_start_2": {
+            "frame": {
+                "x": 252,
+                "y": 3502,
+                "w": 94,
+                "h": 87
+            }
+        },
+        "yoga_flame_start_3": {
+            "frame": {
+                "x": 354,
+                "y": 3502,
+                "w": 76,
+                "h": 87
+            }
+        },
+        "yoga_flame_start_4": {
+            "frame": {
+                "x": 438,
+                "y": 3502,
+                "w": 72,
+                "h": 87
+            }
+        }
+    }
+}
